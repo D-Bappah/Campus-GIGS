@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Gigs - Skills Meet Opportunity at Nile</title>
+  <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #fff;
+      color: #111827;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 36px !important;
+      }
+
+      .hero-subtitle {
+        font-size: 16px !important;
+      }
+
+      .section-title {
+        font-size: 28px !important;
+      }
+
+      .cta-title {
+        font-size: 32px !important;
+      }
+
+      .hero-section {
+        padding: 60px 0 !important;
+        min-height: auto !important;
+      }
+
+      .hero-image-wrapper {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        margin-top: 40px;
+      }
+
+      .hero-stats {
+        position: relative !important;
+        margin-top: 20px;
+        gap: 12px;
+      }
+
+      .stat-box {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        max-width: 100% !important;
+      }
+
+      .stat-card {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        margin: 10px 0;
+        max-width: 100% !important;
+      }
+
+      .feature-card {
+        margin-bottom: 20px;
+      }
+
+      .job-category-card {
+        margin-bottom: 20px;
+      }
+
+      .step-card {
+        margin-bottom: 20px;
+      }
+
+      .testimonial-card {
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .footer-social {
+        gap: 16px;
+      }
+
+      .nav-link {
+        margin: 0 8px;
+        font-size: 14px;
+      }
+
+      .btn-outline,
+      .btn-primary-custom {
+        padding: 6px 16px;
+        font-size: 14px;
+        margin-right: 8px;
+      }
+
+      /* Fix fixed heights on mobile */
+      .why-tile-text,
+      .why-tile-image-wrapper,
+      .step-image {
+        height: auto !important;
+        min-height: 200px;
+      }
+
+      /* Prevent CTA images from blocking text */
+      .cta-left,
+      .cta-right {
+        opacity: 0.15 !important;
+      }
+
+      /* Navbar mobile styling */
+      .navbar-collapse {
+        background: #fff;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        margin: 0 12px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 28px !important;
+      }
+
+      .section-title {
+        font-size: 24px !important;
+      }
+
+      .cta-title {
+        font-size: 24px !important;
+      }
+
+      .hero-section {
+        padding: 60px 0 !important;
+      }
+
+      .section {
+        padding: 60px 0 !important;
+      }
+
+      .cta-section {
+        margin: 60px 0 !important;
+        padding: 60px 0 !important;
+      }
+
+      .navbar {
+        padding: 16px 0 !important;
+      }
+
+      .navbar-brand span {
+        font-size: 16px !important;
+      }
+
+      .feature-card,
+      .job-category-card,
+      .step-card,
+      .testimonial-card {
+        padding: 24px 20px !important;
+      }
+    }
+
+    /* Header */
+    .navbar {
+      padding: 24px 0;
+      background: #fff;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #111827;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .logo-square {
+      width: 40px;
+      height: 40px;
+      background: #3b82f6;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .navbar-nav .nav-link,
+    .nav-link {
+      color: #111827 !important;
+      font-weight: 500;
+      margin: 0 16px;
+      text-decoration: none;
+      font-size: 15px;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .nav-link:hover {
+      color: #3b82f6 !important;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #e5e7eb;
+      color: #111827;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      margin-right: 12px;
+    }
+
+    .btn-outline:hover {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .btn-primary-custom {
+      background: #3b82f6;
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary-custom:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 100px 0 60px;
+      position: relative;
+      text-align: center;
+      background: #fff;
+    }
+
+    .hero-content {
+      max-width: 860px;
+      margin: 0 auto 50px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: #6b7280;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .btn-hero {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-hero:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .hero-image-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    .hero-bg-image {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 20px;
+    }
+
+    /* Section Styling */
+    .section {
+      padding: 100px 0;
+    }
+
+    .section-title {
+      font-size: 40px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: #6b7280;
+      margin-bottom: 60px;
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    /* Why Section */
+    .why-section {
+      background: #fff;
+    }
+
+    .why-tile-text {
+      border-radius: 20px;
+      padding: 40px 30px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .why-tile-text:hover {
+      transform: translateY(-5px);
+    }
+
+    .why-tile-text.blue {
+      background: #dbeafe;
+    }
+
+    .why-tile-text.purple {
+      background: #f3e8ff;
+    }
+
+    .why-tile-text.pink {
+      background: #fce7f3;
+    }
+
+    .why-tile-image-wrapper {
+      border-radius: 20px;
+      height: 300px;
+      overflow: hidden;
+    }
+
+    .why-tile-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .why-tile-image-wrapper:hover .why-tile-image {
+      transform: scale(1.05);
+    }
+
+    .why-icon {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+
+    .feature-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .feature-text {
+      color: #4b5563;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    /* Job Categories */
+    .job-category-card {
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: transform 0.2s;
+      height: 100%;
+      border: none;
+    }
+
+    .job-category-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-category-card.pink {
+      background: #fce7f3;
+    }
+
+    .job-category-card.blue {
+      background: #dbeafe;
+    }
+
+    .job-category-card.orange {
+      background: #fed7aa;
+    }
+
+    .job-category-card.purple {
+      background: #f3e8ff;
+    }
+
+    .job-category-card.green {
+      background: #d1fae5;
+    }
+
+    .job-category-card.yellow {
+      background: #fef3c7;
+    }
+
+    .category-icon {
+      width: 56px;
+      height: 56px;
+      background: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 24px;
+      color: #111827;
+    }
+
+    .category-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .category-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .category-link:hover {
+      color: #2563eb;
+    }
+
+    /* Steps Section */
+    .steps-section {
+      background: #f9fafb;
+    }
+
+    .step-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      height: 100%;
+    }
+
+    .step-label {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .step-image {
+      width: 100%;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      object-fit: cover;
+      height: 240px;
+    }
+
+    .step-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .step-text {
+      color: #6b7280;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      height: 100%;
+    }
+
+    .testimonial-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      object-fit: cover;
+    }
+
+    .testimonial-text {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .testimonial-name {
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .testimonial-role {
+      color: #6b7280;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: #1e40af;
+      /* Deeper blue to match design */
+      color: #fff;
+      padding: 100px 20px;
+      border-radius: 24px;
+      margin: 100px 0;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 10;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      line-height: 1.2;
+    }
+
+    /* Decorative Images */
+    .cta-dec-image {
+      position: absolute;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .cta-left {
+      bottom: 0;
+      left: 0;
+      width: 35%;
+      /* Adjust width as needed */
+      height: 100%;
+      border-top-right-radius: 100%;
+      /* Creates the curve */
+    }
+
+    .cta-right {
+      top: 0;
+      right: 0;
+      width: 35%;
+      /* Increased slightly to ensure fill */
+      height: 100%;
+      /* Extend fully if needed, or stick to percent */
+      max-height: 250px;
+      /* Cap height to keep curve shape */
+      border-bottom-left-radius: 100%;
+    }
+
+    .btn-cta {
+      background: #fff;
+      color: #111827;
+      /* Dark text for contrast */
+      border: none;
+      border-radius: 6px;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-cta:hover {
+      background: #f3f4f6;
+      color: #000;
+    }
+
+    /* FAQ Section */
+    .faq-item {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #111827;
+      font-size: 16px;
+    }
+
+    .faq-answer {
+      margin-top: 16px;
+      color: #6b7280;
+      line-height: 1.6;
+      display: none;
+      font-size: 15px;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    .faq-arrow {
+      transition: transform 0.3s;
+      color: #6b7280;
+    }
+
+    .faq-item.active .faq-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* Footer */
+    .footer {
+      background: #dbeafe;
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .footer-logo img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .footer-link {
+      color: #374151;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: #1e40af;
+    }
+
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #374151;
+      text-decoration: none;
+      font-size: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-icon:hover {
+      color: #1e40af;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a href="#" class="navbar-brand">
+        <img src="assets/logo.png" alt="Campus Gigs" style="width: 40px; height: 40px; object-fit: contain;">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <div class="navbar-nav ms-auto align-items-lg-center mt-3 mt-lg-0">
+          <a href="#" class="nav-link">How It Works</a>
+          <a href="../dashboard/browse-jobs.html?mode=guest" class="nav-link">Browse Jobs</a>
+          <a href="#" class="nav-link">Resources</a>
+
+          <div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3 mt-2 mt-lg-0">
+            <a href="../Login and authentification/login.html" class="btn-outline text-center m-0">Log In</a>
+            <a href="../Login and authentification/SIgn up.html" class="btn-primary-custom text-center">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Skills Meet Opportunity at Nile</h1>
+        <p class="hero-subtitle">Connect with fellow Nile students for projects, freelance work, and collaboration—all
+          while balancing your academic schedule.</p>
+        <a href="../Login and authentification/SIgn up.html" class="btn-hero">Get Started</a>
+      </div>
+
+      <div class="hero-image-wrapper">
+        <img src="assets/hero-students.jpg" alt="Students with collaboration stats" class="hero-bg-image">
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Students Use Campus Gigs -->
+  <section class="section why-section">
+    <div class="container">
+      <h2 class="section-title">Why students use Campus Gigs</h2>
+      <p class="section-subtitle">We understand your unique needs as a student—from class schedules to payment
+        preferences</p>
+
+      <div class="row g-4">
+        <!-- Row 1: Image - Text - Image -->
+        <div class="col-md-4">
+          <div class="why-tile-image-wrapper">
+            <img src="assets/laptop-schedule.jpg" alt="Student schedule" class="why-tile-image">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="why-tile-text blue">
+            <img src="assets/icon-schedule.png" alt="Schedule" class="why-icon">
+            <h3 class="feature-title">Schedule-Friendly</h3>
+            <p class="feature-text"> Find work that fits around your classes, assignments, and exam periods. Set your
+              availability and get matched with jobs that respect your academic commitments.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="why-tile-image-wrapper">
+            <img src="assets/tablet-satisfaction.jpg" alt="Student using tablet" class="why-tile-image">
+          </div>
+        </div>
+
+        <!-- Row 2: Text - Image - Text -->
+        <div class="col-md-4">
+          <div class="why-tile-text pink">
+            <img src="assets/icon-pay.png" alt="Secure Payment" class="why-icon">
+            <h3 class="feature-title">Secure Payments</h3>
+            <p class="feature-text"> Integrated with Paystack for safe transactions. Funds held in escrow until work is
+              approved, then transferred directly to your bank account or mobile money wallet.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="why-tile-image-wrapper">
+            <img src="assets/mobile-payment.jpg" alt="Mobile earning" class="why-tile-image">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="why-tile-text purple">
+            <img src="assets/icon-experience.png" alt="Experience" class="why-icon">
+            <h3 class="feature-title">Real Experience</h3>
+            <p class="feature-text">: Every project strengthens your portfolio and develops professional skills.
+              Graduate with more than just a degree—leave with a proven track record.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work That Fits Your Student Life -->
+  <section id="job-categories" class="section">
+    <div class="container">
+      <h2 class="section-title">Work That Fits Your Student Life</h2>
+      <p class="section-subtitle">Find freelance jobs and projects that fits your skills and class timetable. Start
+        building your portfolio and income while you study.</p>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="job-category-card pink">
+            <div class="category-icon">
+              <img src="assets/icon-graphic-design.png" alt="Graphic design icon" style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Graphic design</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card blue">
+            <div class="category-icon">
+              <img src="assets/icon-web-dev.png" alt="Web development icon" style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Web Development</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card orange">
+            <div class="category-icon">
+              <img src="assets/icon-content-writing.png" alt="Content writing icon" style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Content Writing & Editing</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card purple">
+            <div class="category-icon">
+              <img src="assets/icon-video-production.png" alt="Video production icon"
+                style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Video Production</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card green">
+            <div class="category-icon">
+              <img src="assets/icon-social-media.png" alt="Social media management icon"
+                style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Social Media Management</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card blue">
+            <div class="category-icon">
+              <img src="assets/icon-data-analysis.png" alt="Data analysis icon" style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Data Analysis & Research</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card pink">
+            <div class="category-icon">
+              <img src="assets/icon-mobile-app.png" alt="Mobile app development icon"
+                style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Mobile App Development</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card purple">
+            <div class="category-icon">
+              <img src="assets/icon-translation.png" alt="Translation icon" style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Translation & Languages</h4>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="job-category-card yellow">
+            <div class="category-icon">
+              <img src="assets/icon-business-marketing.png" alt="Business & marketing icon"
+                style="width: 32px; height: 32px;">
+            </div>
+            <h4 class="category-title">Business & Marketing</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Get Started in Three Simple Steps -->
+  <section id="how-it-works" class="section steps-section">
+    <div class="container">
+      <h2 class="section-title">Get Started in Three Simple Steps</h2>
+      <p class="section-subtitle">Connect with fellow students, earn on your schedule, and build your portfolio before
+        graduation.</p>
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="step-card">
+            <div class="step-label">Step 1</div>
+            <img src="assets/step1-profile.jpg" alt="Create profile" class="step-image">
+            <h3 class="step-title">Create Your Student Profile</h3>
+            <p class="step-text">Sign up with your official Nile University email and verify your student ID. Showcase
+              your talents by adding your skills, portfolio samples, and weekly availability. Get set up and ready for
+              opportunities in less than 10 minutes.</p>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="step-card">
+            <div class="step-label">Step 2</div>
+            <img src="assets/step2-browse.jpg" alt="Browse jobs" class="step-image">
+            <h3 class="step-title">Browse & Apply to Jobs</h3>
+            <p class="step-text">Explore opportunities matched to your skills and schedule. Submit proposals with your
+              rates and timeline. Our system shows you only jobs that fit your availability.</p>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="step-card">
+            <div class="step-label">Step 3</div>
+            <img src="assets/step3-payment.jpg" alt="Get paid" class="step-image">
+            <h3 class="step-title">Complete Work & Get Paid</h3>
+            <p class="step-text">Deliver quality work through our messaging system. Once approved, payment is released
+              directly to your account. Build your rating with every successful project.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Testimonials</h2>
+      <p class="section-subtitle">Hear from students and clients who've found success on our platform</p>
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="testimonial-card">
+            <img src="assets/avatar-wade.jpg" alt="Wade Warren" class="testimonial-avatar">
+            <p class="testimonial-text">"I've been able to earn money while maintaining my GPA. The flexible schedule
+              options are perfect for students."</p>
+            <div class="testimonial-name">Wade Warren</div>
+            <div class="testimonial-role">Software Engineering</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="testimonial-card">
+            <img src="assets/avatar-peter.jpg" alt="Peter James" class="testimonial-avatar">
+            <p class="testimonial-text">"Found a talented student to build my website. The quality was excellent and the
+              communication was smooth throughout."</p>
+            <div class="testimonial-name">Peter James</div>
+            <div class="testimonial-role">Information Technology</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="testimonial-card">
+            <img src="assets/avatar-john.jpg" alt="John Bossman" class="testimonial-avatar">
+            <p class="testimonial-text">"Working on real projects has helped me learn new things, apply knowledge to
+              real-world problems, and gain confidence in my skills."</p>
+            <div class="testimonial-name">John Bossman</div>
+            <div class="testimonial-role">Computer Science</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ready to Start CTA -->
+  <section class="cta-section">
+    <!-- Decorative Corner Images -->
+    <img src="assets/cta-left.jpg" alt="" class="cta-dec-image cta-left">
+    <img src="assets/cta-right.jpg" alt="" class="cta-dec-image cta-right">
+
+    <div class="cta-content">
+      <h2 class="cta-title">Ready to Start Your<br>Freelance Journey?</h2>
+      <a href="../Login and authentification/SIgn up.html" class="btn-cta">Get Started</a>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="section">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-subtitle">Find quick answers to common questions about our student freelance platform.</p>
+
+      <div class="faq-item active">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Who can join Campus Gigs?</span>
+          <i class="bi bi-chevron-down faq-arrow"></i>
+        </div>
+        <div class="faq-answer">
+          Currently, only Nile University students with valid university email address (@nileuniversity.edu.ng) can
+          register as freelancers.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How much does it cost to use the platform?</span>
+          <i class="bi bi-chevron-down faq-arrow"></i>
+        </div>
+        <div class="faq-answer">
+          Campus Gigs is free to join for all Nile University students. We only charge a small service fee on completed
+          projects, which is deducted from the payment before it reaches your account.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How do payments work?</span>
+          <i class="bi bi-chevron-down faq-arrow"></i>
+        </div>
+        <div class="faq-answer">
+          Payments are securely processed through Paystack. Funds are held in escrow until the client approves your
+          work. Once approved, payment is released directly to your bank account or mobile money wallet within 2-3
+          business days.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>What types of jobs are available?</span>
+          <i class="bi bi-chevron-down faq-arrow"></i>
+        </div>
+        <div class="faq-answer">
+          We offer a wide range of freelance opportunities including graphic design, web development, content writing,
+          video production, social media management, data analysis, mobile app development, translation services, and
+          business consulting. New categories are added regularly based on student demand.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">
+        <img src="assets/logo.png" alt="Campus Gigs">
+      </div>
+
+      <div class="footer-links">
+        <a href="#" class="footer-link">How It Works</a>
+        <a href="../dashboard/browse-jobs.html?mode=guest" class="footer-link">Browse Jobs</a>
+        <a href="#" class="footer-link">Resources</a>
+
+      </div>
+
+      <div class="footer-social">
+        <a href="#" class="social-icon">
+          <i class="bi bi-twitter-x"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="bi bi-instagram"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="bi bi-facebook"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleFaq(element) {
+      const faqItem = element.closest('.faq-item');
+      faqItem.classList.toggle('active');
+    }
+  </script>
+</body>
+
+</html>

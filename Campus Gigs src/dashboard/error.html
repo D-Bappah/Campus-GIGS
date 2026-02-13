@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Error - Campus Gigs</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/notifications.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Reusing Header/Footer Styles from Dashboard for consistency */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+            margin-bottom: 0;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #9ca3af;
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        /* Error Page Specific Styles */
+        .error-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .error-illustration {
+            max-width: 100%;
+            width: 300px;
+            /* Adjust based on image size */
+            height: auto;
+            margin-bottom: 32px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .error-text {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.5;
+            max-width: 400px;
+            margin: 0 auto 32px;
+        }
+
+        .btn-reload {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-reload:hover {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        /* Footer Reuse */
+        .footer {
+            background: #dbeafe;
+            padding: 60px 0 40px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-link {
+            color: #374151;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="payment.html">Payment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="message.html">Message</a>
+                    </li>
+                </ul>
+                <div class="header-icons d-flex align-items-center">
+                    <a href="settings.html" class="btn-icon text-decoration-none"><i class="bi bi-gear"></i></a>
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" id="notificationBtn"><i class="bi bi-bell"></i></button>
+                        <!-- Notification Popup -->
+                        <div class="notification-popup" id="notificationPopup">
+                            <div class="notification-header">
+                                <h4 class="notif-title">Notifications</h4>
+                                <a href="#" class="mark-read-link">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-icon-box"><i class="bi bi-briefcase"></i></div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>New Job Alert:</strong> Product Designer needed
+                                            for Fintech project.</p>
+                                        <span class="notif-time">2 mins ago</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-avatar">
+                                        <img src="assets/avatar-samu.jpg"
+                                            onerror="this.src='https://via.placeholder.com/40'" alt="User"
+                                            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Samu</strong> sent you a message regarding "House
+                                            for rent".</p>
+                                        <span class="notif-time">1 hour ago</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="notification-footer">
+                                <a href="#" class="view-all-link">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="dashboard.html" class="text-decoration-none">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <img src="assets/illustration-error-rocket.png" alt="Something went wrong" class="error-illustration">
+        <h1 class="error-title">Something went wrong!</h1>
+        <p class="error-text">We ran into an unexpected issue while loading this page. Don't worry — this isn't your
+            fault.</p>
+        <button class="btn-reload" onclick="location.reload()">Reload page</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">How It Works</a>
+                <a href="#" class="footer-link">Browse Jobs</a>
+                <a href="#" class="footer-link">Resources</a>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/notifications.js"></script>
+
+</body>
+
+</html>

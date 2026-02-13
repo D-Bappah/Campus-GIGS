@@ -1,0 +1,152 @@
+/* Notification Popup Styles */
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 380px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    z-index: 1050;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.notification-popup.show {
+    display: block;
+}
+
+.notification-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notif-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #111827;
+    margin: 0;
+}
+
+.mark-read-link {
+    font-size: 13px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.mark-read-link:hover {
+    text-decoration: underline;
+}
+
+.notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    display: flex;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f9fafb;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+
+.notification-item:hover {
+    background-color: #f9fafb;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item.unread {
+    background-color: #eff6ff;
+}
+
+.notif-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.notif-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #4b5563;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.notif-content {
+    flex: 1;
+}
+
+.notif-text {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.notif-text strong {
+    font-weight: 600;
+    color: #111827;
+}
+
+.notif-time {
+    font-size: 12px;
+    color: #9ca3af;
+    display: block;
+}
+
+.notification-footer {
+    padding: 12px;
+    text-align: center;
+    border-top: 1px solid #f3f4f6;
+    background-color: #fff;
+}
+
+.view-all-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    color: #3b82f6;
+}
+
+/* Badge for bell icon if needed */
+.notification-badge-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}

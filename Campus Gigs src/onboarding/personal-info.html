@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account Setup - Personal Information</title>
+  <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #fff;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    .onboarding-container {
+      display: grid;
+      grid-template-columns: 520px 1fr;
+      gap: 64px;
+      align-items: center;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .onboarding-left {
+      padding: 48px 56px;
+      padding-left: 72px;
+      padding-right: 72px;
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+
+    .onboarding-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0;
+      background: transparent;
+    }
+
+    .onboarding-right img {
+      width: 100%;
+      max-width: 700px;
+      height: calc(86vh);
+      max-height: 980px;
+      border-radius: 28px;
+      object-fit: cover;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+    }
+
+    /* Header */
+    .onboarding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+      width: 100%;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #111827;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .back-link i {
+      font-size: 18px;
+    }
+
+    .back-link:hover {
+      color: #3b82f6;
+    }
+
+    .header-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .login-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .login-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Progress */
+    .progress-wrapper {
+      margin-bottom: 32px;
+    }
+
+    .progress-indicator {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #111827;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar.step-1 {
+      width: 25%;
+    }
+
+    .progress-bar.step-2 {
+      width: 50%;
+    }
+
+    .progress-bar.step-3 {
+      width: 75%;
+    }
+
+    .progress-bar.step-4 {
+      width: 100%;
+    }
+
+    /* Form Styles */
+    .onboarding-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .onboarding-subtitle {
+      color: #6b7280;
+      font-size: 16px;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px 12px 48px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Buttons */
+    .form-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .form-actions .btn-primary {
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-secondary {
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 16px;
+    }
+
+    .btn-secondary:hover {
+      color: #3b82f6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .onboarding-container {
+        grid-template-columns: 1fr;
+      }
+
+      .onboarding-left {
+        padding: 40px 60px;
+        max-width: 100%;
+      }
+
+      .onboarding-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .onboarding-left {
+        padding: 30px 20px;
+      }
+
+      .onboarding-title {
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .onboarding-left {
+        padding: 20px 15px;
+      }
+
+      .onboarding-title {
+        font-size: 24px;
+      }
+
+      .onboarding-subtitle {
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+    }
+
+    /* Profile Picture */
+    .profile-upload-container {
+      display: flex;
+      margin-bottom: 32px;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .avatar-preview {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 600;
+      color: white;
+      overflow: hidden;
+      object-fit: cover;
+    }
+
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-edit-avatar {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      width: 32px;
+      height: 32px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #6b7280;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s;
+      padding: 0;
+    }
+
+    .btn-edit-avatar:hover {
+      color: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    /* Rich Text Editor */
+    .rich-text-editor {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .editor-toolbar {
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+      display: flex;
+      gap: 16px;
+    }
+
+    .toolbar-btn {
+      background: none;
+      border: none;
+      color: #4b5563;
+      padding: 4px;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toolbar-btn:hover {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .toolbar-group {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .toolbar-submit-right {
+      margin-left: auto;
+    }
+
+    .editor-content {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: none;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 15px;
+      color: #111827;
+      display: block;
+    }
+
+    .editor-content:focus {
+      outline: none;
+    }
+
+    .editor-content::placeholder {
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="onboarding-container">
+    <div class="onboarding-left">
+      <div class="onboarding-header">
+        <a href="../Login and authentification/login.html" class="back-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <div class="header-title">Account Setup</div>
+        <a href="../Login and authentification/login.html" class="login-link">Log In</a>
+      </div>
+
+      <div class="progress-wrapper">
+        <div class="progress-indicator">1/4 steps</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar step-1"></div>
+        </div>
+      </div>
+
+      <h1 class="onboarding-title">Personal Information</h1>
+      <p class="onboarding-subtitle">Create your profile and start connecting with clients</p>
+
+      <form id="personalInfoForm">
+        <!-- Profile Picture -->
+        <div class="profile-upload-container">
+          <div class="avatar-wrapper">
+            <div class="avatar-preview" id="avatarPreview">AA</div>
+            <button type="button" class="btn-edit-avatar" id="btnEditAvatar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>
+            </button>
+            <input type="file" id="avatarInput" hidden accept="image/*">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="firstName" class="form-label">First name</label>
+          <div class="input-wrapper">
+            <i class="bi bi-person input-icon"></i>
+            <input type="text" id="firstName" class="form-control" placeholder="e.g John" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName" class="form-label">Last name</label>
+          <div class="input-wrapper">
+            <i class="bi bi-person input-icon"></i>
+            <input type="text" id="lastName" class="form-control" placeholder="e.g Peter" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="displayName" class="form-label">Preferred display name</label>
+          <div class="input-wrapper">
+            <i class="bi bi-person input-icon"></i>
+            <input type="text" id="displayName" class="form-control" placeholder="e.g John Peter" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Short Bio</label>
+          <div class="rich-text-editor">
+            <div class="editor-toolbar">
+              <div class="toolbar-group">
+                <button type="button" class="toolbar-btn"><b style="font-family: serif; font-size: 16px;">B</b></button>
+                <button type="button" class="toolbar-btn"><i
+                    style="font-family: serif; font-size: 16px; font-style: italic;">I</i></button>
+              </div>
+              <div class="toolbar-group">
+                <button type="button" class="toolbar-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+                <button type="button" class="toolbar-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="toolbar-group">
+                <button type="button" class="toolbar-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="toolbar-group">
+                <button type="button" class="toolbar-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                  </svg>
+                </button>
+                <button type="button" class="toolbar-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                    <path d="M21 3v5h-5"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="toolbar-submit-right">
+                <button type="button" class="toolbar-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span style="margin-left: 4px; font-size: 13px;">Insert</span>
+                </button>
+              </div>
+            </div>
+            <textarea id="shortBio" class="editor-content" placeholder="Enter a description..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Next</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="onboarding-right">
+      <img src="asset/laptop-resume-illustration.jpg" alt="Laptop with resume illustration">
+    </div>
+  </div>
+
+  <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="asset/personal-info.js"></script>
+</body>
+
+</html>

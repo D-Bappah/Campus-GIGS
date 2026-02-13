@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Work - Campus Gigs</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/notifications.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+        }
+
+        /* Header Styles - reusing form dashboard.html */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+            margin-bottom: 0px;
+            /* Reduced margin for subnav */
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #3b82f6 !important;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .profile-dropdown {
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 24px;
+        }
+
+        /* Sub Navigation */
+        .sub-nav {
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 32px;
+        }
+
+        .sub-nav-item {
+            padding: 16px 4px;
+            margin-right: 24px;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            border-bottom: 2px solid transparent;
+        }
+
+        .sub-nav-item.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        /* Sidebar Filters */
+        .sidebar-link {
+            display: block;
+            padding: 10px 16px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 4px;
+            border-left: 2px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            color: #111827;
+        }
+
+        .sidebar-link.active {
+            color: #3b82f6;
+            border-left-color: #3b82f6;
+            font-weight: 500;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            color: #4b5563;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+
+        .btn-primary-custom {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        /* Contract Card */
+        .contract-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            height: 100%;
+            background: #fff;
+            position: relative;
+        }
+
+        .contract-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+            padding-right: 60px;
+            /* Space for status badge */
+        }
+
+        .contract-meta {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .contract-details {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        .contract-details span {
+            display: flex;
+            align-items: center;
+        }
+
+        .dot-sep {
+            width: 4px;
+            height: 4px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+        }
+
+        .badge-status {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .status-completed {
+            background-color: #ecfdf5;
+            color: #059669;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-view {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-view:hover {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-download {
+            background-color: transparent;
+            color: #374151;
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-download:hover {
+            color: #111827;
+        }
+
+        /* Footer Styles - reused */
+        .footer {
+            background: #dbeafe;
+            padding: 60px 0 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-link {
+            color: #374151;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .d-none {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse-jobs.html?mode=registered">Browse Jobs</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="work.html">Work</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="payment.html">Payment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="message.html">Message</a>
+                    </li>
+                </ul>
+
+                <div class="header-icons d-flex align-items-center">
+                    <a href="settings.html" class="btn-icon text-decoration-none">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" id="notificationBtn">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                        <!-- Notification Popup -->
+                        <div class="notification-popup" id="notificationPopup">
+                            <div class="notification-header">
+                                <h4 class="notif-title">Notifications</h4>
+                                <a href="#" class="mark-read-link">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <!-- Item 1 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-icon-box">
+                                        <i class="bi bi-briefcase"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>New Job Alert:</strong> Product Designer needed
+                                            for Fintech project.</p>
+                                        <span class="notif-time">2 mins ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 2 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-avatar">
+                                        <!-- Placeholder for user avatar -->
+                                        <img src="assets/avatar-samu.jpg"
+                                            onerror="this.src='https://via.placeholder.com/40'" alt="User"
+                                            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Samu</strong> sent you a message regarding "House
+                                            for rent".</p>
+                                        <span class="notif-time">1 hour ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 3 -->
+                                <a href="#" class="notification-item">
+                                    <div class="notif-icon-box" style="background-color: #ecfdf5; color: #059669;">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Payment Received:</strong> N20,000 has been added
+                                            to your wallet.</p>
+                                        <span class="notif-time">Yesterday</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="notification-footer">
+                                <a href="#" class="view-all-link">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown dropdown">
+                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="dashboard.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="work.html">Saved Jobs</a></li>
+                            <li><a class="dropdown-item" href="help.html">Help</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sub Navigation -->
+    <div class="container">
+        <div class="sub-nav">
+            <a href="#" class="sub-nav-item active">Contracts</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container pb-5">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2">
+                <nav class="d-flex flex-column">
+                    <a href="#" class="sidebar-link active" data-filter="all">All</a>
+                    <a href="#" class="sidebar-link" data-filter="active">Active</a>
+                    <a href="#" class="sidebar-link" data-filter="pending">Pending</a>
+                    <a href="#" class="sidebar-link" data-filter="completed">Completed</a>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-md-10">
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state d-none">
+                    <h3>No contracts yet!</h3>
+                    <p>This is where you'll find all contracts for jobs you've accepted.<br>
+                        Once an employer sends you an offer and you sign the contract, it will appear here.</p>
+                    <a href="browse-jobs.html?mode=registered" class="btn-primary-custom">Browse jobs</a>
+                </div>
+
+                <!-- Contract List -->
+                <div id="contract-list" class="row g-4">
+                    <!-- Contract item 1 -->
+                    <div class="col-md-6" data-status="active">
+                        <div class="contract-card">
+                            <span class="badge-status status-active">Active</span>
+                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
+                            <div class="contract-meta">Posted by: Student affairs office</div>
+                            <div class="contract-details">
+                                <span>Pay: N50,000</span>
+                                <span class="dot-sep"></span>
+                                <span>3 weeks</span>
+                                <span class="dot-sep"></span>
+                                <span>Start: Aug 3rd 2025</span>
+                            </div>
+                            <div class="action-btns">
+                                <a href="contract-details.html" class="btn-view">View contract</a>
+                                <button class="btn-download">Download PDF</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contract item 2 -->
+                    <div class="col-md-6" data-status="active">
+                        <div class="contract-card">
+                            <span class="badge-status status-active">Active</span>
+                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
+                            <div class="contract-meta">Posted by: Student affairs office</div>
+                            <div class="contract-details">
+                                <span>Pay: N50,000</span>
+                                <span class="dot-sep"></span>
+                                <span>3 weeks</span>
+                                <span class="dot-sep"></span>
+                                <span>Start: Aug 3rd 2025</span>
+                            </div>
+                            <div class="action-btns">
+                                <a href="contract-details.html" class="btn-view">View contract</a>
+                                <button class="btn-download">Download PDF</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contract item 3 -->
+                    <div class="col-md-6" data-status="completed">
+                        <div class="contract-card">
+                            <span class="badge-status status-completed">Completed</span>
+                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
+                            <div class="contract-meta">Posted by: Student affairs office</div>
+                            <div class="contract-details">
+                                <span>Pay: N50,000</span>
+                                <span class="dot-sep"></span>
+                                <span>3 weeks</span>
+                                <span class="dot-sep"></span>
+                                <span>Start: Aug 3rd 2025</span>
+                            </div>
+                            <div class="action-btns">
+                                <a href="contract-details.html" class="btn-view">View contract</a>
+                                <button class="btn-download">Download PDF</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contract item 4 -->
+                    <div class="col-md-6" data-status="completed">
+                        <div class="contract-card">
+                            <span class="badge-status status-completed">Completed</span>
+                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
+                            <div class="contract-meta">Posted by: Student affairs office</div>
+                            <div class="contract-details">
+                                <span>Pay: N50,000</span>
+                                <span class="dot-sep"></span>
+                                <span>3 weeks</span>
+                                <span class="dot-sep"></span>
+                                <span>Start: Aug 3rd 2025</span>
+                            </div>
+                            <div class="action-btns">
+                                <a href="contract-details.html" class="btn-view">View contract</a>
+                                <button class="btn-download">Download PDF</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </div>
+
+            <div class="footer-links">
+                <a href="#" class="footer-link">How It Works</a>
+                <a href="browse-jobs.html?mode=registered" class="footer-link">Browse Jobs</a>
+                <a href="#" class="footer-link">Resources</a>
+            </div>
+
+            <div class="footer-social">
+                <a href="#" class="social-icon">
+                    <i class="bi bi-twitter-x"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="bi bi-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/work.js"></script>
+    <script src="assets/notifications.js"></script>
+</body>
+
+</html>

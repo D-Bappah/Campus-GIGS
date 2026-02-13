@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apply - Product Designer</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/notifications.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header Styles (Dashboard) --- */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .nav-link.active {
+            color: #3b82f6 !important;
+            position: relative;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -24px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #3b82f6;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #9ca3af;
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        /* Container */
+        .main-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Back Button */
+        .back-link {
+            text-decoration: none;
+            color: #111827;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .back-link:hover {
+            color: #3b82f6;
+        }
+
+        /* Job Header Card */
+        .job-header-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .job-card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .job-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .company-icon {
+            color: #3b82f6;
+            font-size: 18px;
+        }
+
+        /* Placeholder for Samu logo */
+
+        /* Progress */
+        .app-progress-label {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress {
+            height: 8px;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            background-color: #111827;
+            width: 15%;
+        }
+
+        /* Started state */
+
+        /* Upload Section */
+        .upload-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            /* Dotted border inside usually? Design shows solid outer, dashed inner */
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .upload-title-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .upload-icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #6b7280;
+        }
+
+        .upload-texts h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .upload-texts p {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .drop-zone {
+            border: 2px dashed #d1d5db;
+            /* Dashed inside */
+            border-radius: 12px;
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .drop-zone:hover {
+            border-color: #3b82f6;
+        }
+
+        .drop-icon {
+            font-size: 32px;
+            color: #4b5563;
+            margin-bottom: 16px;
+        }
+
+        .drop-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .drop-desc {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .btn-browse {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        /* Form */
+        .form-label {
+            font-weight: 600;
+            font-size: 15px;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .editor-box {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 150px;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 16px;
+            color: #6b7280;
+            font-size: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .editor-toolbar i {
+            cursor: pointer;
+        }
+
+        .editor-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            color: #374151;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .btn-continue {
+            background-color: #e5e7eb;
+            /* Disabled-ish look initially? Design shows light grey 'Continue' */
+            color: #9ca3af;
+            width: 200px;
+            padding: 12px 0;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            margin: 40px auto 0;
+            display: block;
+            pointer-events: none;
+            /* simple validation sim */
+        }
+
+        /* Active state for button */
+        .btn-continue.active {
+            background-color: #3b82f6;
+            color: white;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="browse-jobs.html?mode=registered">Browse
+                            Jobs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="work.html">Work</a></li>
+                    <li class="nav-item"><a class="nav-link" href="payment.html">Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="message.html">Message</a></li>
+                </ul>
+                <div class="header-icons d-flex align-items-center">
+                    <a href="settings.html" class="btn-icon text-decoration-none">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" id="notificationBtn">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                        <!-- Notification Popup -->
+                        <div class="notification-popup" id="notificationPopup">
+                            <div class="notification-header">
+                                <h4 class="notif-title">Notifications</h4>
+                                <a href="#" class="mark-read-link">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <!-- Item 1 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-icon-box">
+                                        <i class="bi bi-briefcase"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>New Job Alert:</strong> Product Designer needed
+                                            for Fintech project.</p>
+                                        <span class="notif-time">2 mins ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 2 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-avatar">
+                                        <!-- Placeholder for user avatar -->
+                                        <img src="assets/avatar-samu.jpg"
+                                            onerror="this.src='https://via.placeholder.com/40'" alt="User"
+                                            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Samu</strong> sent you a message regarding "House
+                                            for rent".</p>
+                                        <span class="notif-time">1 hour ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 3 -->
+                                <a href="#" class="notification-item">
+                                    <div class="notif-icon-box" style="background-color: #ecfdf5; color: #059669;">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Payment Received:</strong> N20,000 has been added
+                                            to your wallet.</p>
+                                        <span class="notif-time">Yesterday</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="notification-footer">
+                                <a href="#" class="view-all-link">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown dropdown">
+                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="dashboard.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="work.html">Saved Jobs</a></li>
+                            <li><a class="dropdown-item" href="help.html">Help</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Back Link -->
+        <a href="job-details.html?mode=registered" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+
+        <!-- Job Header -->
+        <div class="job-header-card">
+            <div>
+                <h2 class="job-card-title">Product Designer</h2>
+                <div class="job-card-meta">
+                    <i class="bi bi-buildings company-icon"></i> <span>Samu</span>
+                </div>
+            </div>
+            <div class="job-card-meta">
+                <i class="bi bi-geo-alt"></i> On campus
+            </div>
+        </div>
+
+        <!-- Application Form -->
+        <div class="app-progress-label">
+            <span>Application</span>
+            <span>15%</span>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0"
+                aria-valuemax="100"></div>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-title-row">
+                <div class="upload-icon-circle"><i class="bi bi-cloud-arrow-up"></i></div>
+                <div class="upload-texts">
+                    <h4>Resume</h4>
+                    <p>Select and upload the files of your choice</p>
+                </div>
+            </div>
+
+            <div class="drop-zone" onclick="triggerFileUpload()">
+                <div class="drop-icon"><i class="bi bi-cloud-upload"></i></div>
+                <h5 class="drop-title">Choose a file or drag & drop it here</h5>
+                <p class="drop-desc">JPEG, PNG, PDG, and MP4 formats, up to 50MB</p>
+                <button class="btn-browse">Browse File</button>
+                <input type="file" id="fileInput" hidden onchange="handleFileSelect()">
+            </div>
+            <!-- File selected feedback area -->
+            <div id="fileSelected" class="mt-3 text-success d-none">
+                <i class="bi bi-check-circle-fill me-2"></i> <span id="fileName">resume.pdf</span> selected
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Why are you a good fit for this role?</label>
+            <div class="editor-box">
+                <div class="editor-toolbar">
+                    <i class="bi bi-type-bold"></i>
+                    <i class="bi bi-type-italic"></i>
+                    <i class="bi bi-list-ul"></i>
+                    <i class="bi bi-list-ol"></i>
+                    <i class="bi bi-link-45deg"></i>
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span class="ms-auto small text-muted"><i class="bi bi-plus-lg"></i> Insert</span>
+                </div>
+                <textarea class="editor-input" rows="4" placeholder="Enter a description..."
+                    oninput="checkForm()"></textarea>
+            </div>
+        </div>
+
+        <button id="btnContinue" class="btn-continue" onclick="submitApplication()">Continue</button>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/notifications.js"></script>
+
+    <script>
+        function triggerFileUpload() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileSelect() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length > 0) {
+                document.getElementById('fileSelected').classList.remove('d-none');
+                document.getElementById('fileName').innerText = fileInput.files[0].name;
+                checkForm();
+            }
+        }
+
+        function checkForm() {
+            const fileInput = document.getElementById('fileInput');
+            const textArea = document.querySelector('.editor-input');
+            const btn = document.getElementById('btnContinue');
+
+            // Simple validation: File + specific text length or just interaction
+            if (fileInput.files.length > 0) {
+                btn.classList.add('active');
+            }
+        }
+
+        function submitApplication() {
+            window.location.href = "application-success.html";
+        }
+    </script>
+</body>
+
+</html>

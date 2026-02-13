@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account Setup - Profile Setup</title>
+  <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #fff;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    .onboarding-container {
+      display: grid;
+      grid-template-columns: 520px 1fr;
+      gap: 64px;
+      align-items: center;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .onboarding-left {
+      padding: 48px 56px;
+      padding-left: 72px;
+      padding-right: 72px;
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+
+    .onboarding-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0;
+      background: transparent;
+    }
+
+    .onboarding-right img {
+      width: 100%;
+      max-width: 700px;
+      height: calc(86vh);
+      max-height: 980px;
+      border-radius: 28px;
+      object-fit: cover;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+    }
+
+    /* Header */
+    .onboarding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+      width: 100%;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #111827;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .back-link i {
+      font-size: 18px;
+    }
+
+    .back-link:hover {
+      color: #3b82f6;
+    }
+
+    .header-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .login-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .login-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Progress */
+    .progress-wrapper {
+      margin-bottom: 32px;
+    }
+
+    .progress-indicator {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #111827;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar.step-1 {
+      width: 25%;
+    }
+
+    .progress-bar.step-2 {
+      width: 50%;
+    }
+
+    .progress-bar.step-3 {
+      width: 75%;
+    }
+
+    .progress-bar.step-4 {
+      width: 100%;
+    }
+
+    /* Form Styles */
+    .onboarding-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .onboarding-subtitle {
+      color: #6b7280;
+      font-size: 16px;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      padding-right: 40px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 16px center;
+      background-size: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .input-with-dropdown {
+      position: relative;
+    }
+
+    .input-with-dropdown::after {
+      content: '';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat;
+      pointer-events: none;
+    }
+
+    .file-upload-btn {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      cursor: pointer;
+      text-align: left;
+      color: #6b7280;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .file-upload-btn:hover {
+      border-color: #3b82f6;
+    }
+
+    .file-upload-btn:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Buttons */
+    .form-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .form-actions .btn-primary {
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-secondary {
+      text-align: center;
+      margin-left: 0;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-secondary {
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 16px;
+    }
+
+    .btn-secondary:hover {
+      color: #3b82f6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .onboarding-container {
+        grid-template-columns: 1fr;
+      }
+
+      .onboarding-left {
+        padding: 40px 60px;
+        max-width: 100%;
+      }
+
+      .onboarding-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .onboarding-left {
+        padding: 30px 20px;
+      }
+
+      .onboarding-title {
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .onboarding-left {
+        padding: 20px 15px;
+      }
+
+      .onboarding-title {
+        font-size: 24px;
+      }
+
+      .onboarding-subtitle {
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="onboarding-container">
+    <div class="onboarding-left">
+      <div class="onboarding-header">
+        <a href="services.html" class="back-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <div class="header-title">Account Setup</div>
+        <a href="../Login and authentification/login.html" class="login-link">Log In</a>
+      </div>
+
+      <div class="progress-wrapper">
+        <div class="progress-indicator">4/4 steps</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar step-4"></div>
+        </div>
+      </div>
+
+      <h1 class="onboarding-title">Academic information</h1>
+      <p class="onboarding-subtitle">Show clients you're building expertise. Share your academic path.</p>
+
+      <form id="profileSetupForm">
+        <div class="form-group">
+          <label for="skillProficiency" class="form-label">Skill Proficiency</label>
+          <select id="skillProficiency" class="form-select">
+            <option value="">Select Proficiency Level</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="availability" class="form-label">Availability</label>
+          <div class="input-with-dropdown">
+            <input type="text" id="availability" class="form-control" placeholder="e.g 2hrs">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="workType" class="form-label">Preferred Work Type</label>
+          <select id="workType" class="form-select">
+            <option value="">Select Your Work Type</option>
+            <option value="remote">Remote</option>
+            <option value="onsite">On-site</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="flexible">Flexible</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="hourlyRate" class="form-label">Hourly Range</label>
+          <input type="text" id="hourlyRate" class="form-control" placeholder="Set your minimum rate">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Portfolio</label>
+          <div style="margin-bottom: 16px;">
+            <label for="linkedin" class="form-label" style="font-size: 13px; margin-bottom: 6px;">Link Your LinkedIn
+              Account</label>
+            <input type="url" id="linkedin" class="form-control" placeholder="http">
+          </div>
+          <div>
+            <label for="github" class="form-label" style="font-size: 13px; margin-bottom: 6px;">Link Your GitHub</label>
+            <input type="url" id="github" class="form-control" placeholder="Github">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="resume" class="form-label">Upload Resume</label>
+          <label for="resume" class="file-upload-btn">Click to upload</label>
+          <input type="file" id="resume" accept=".pdf,.doc,.docx">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Continue</button>
+          <a href="#" class="btn-secondary" onclick="skipForNow()">Skip For Now</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="onboarding-right">
+      <img src="asset/laptop-resume-illustration.jpg" alt="Laptop with resume illustration">
+    </div>
+  </div>
+
+  <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="asset/profile-setup.js"></script>
+  <script>
+    document.getElementById('resume').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.querySelector('.file-upload-btn').textContent = file.name;
+      } else {
+        document.querySelector('.file-upload-btn').textContent = 'Click to upload';
+      }
+    });
+  </script>
+</body>
+
+</html>

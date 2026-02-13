@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Help & FAQs - Campus Gigs</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/notifications.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Reusing Header Styles (Dashboard version as this page is accessed via help option)
+           Wait, user said "for those that don't have an account on the find job page add a help icon".
+           So this page should be accessible to both.
+           Let's use a Public Header style by default for simplicity or check if we need authorized header.
+           Since it's a help page, a public header is safer, or we can reuse the dual header logic if we want to be fancy.
+           For now, I'll stick to a simple public-friendly header or the dashboard one if logged in.
+           Actually, let's just use the Public Header for uniformity as it's a Help page,
+           OR we can copy the browse-jobs dual header approach.
+           Let's go with the public header style for now as it's generic.
+        */
+
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .faq-header {
+            margin-bottom: 60px;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .header-icons .btn-icon:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+        }
+
+        .profile-dropdown {
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 24px;
+        }
+
+        .faq-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .faq-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .faq-link {
+            color: #111827;
+            text-decoration: underline;
+        }
+
+        .faq-grid {
+            margin-bottom: 80px;
+        }
+
+        .faq-item {
+            margin-bottom: 40px;
+        }
+
+        .faq-question {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .faq-answer {
+            font-size: 15px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .contact-section {
+            background-color: #f9fafb;
+            padding: 60px 0;
+            text-align: center;
+            border-radius: 16px;
+            margin-bottom: 80px;
+        }
+
+        .contact-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .contact-text {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .btn-primary-custom {
+            background-color: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        /* Footer Reused */
+        .footer {
+            background: #dbeafe;
+            padding: 60px 0 40px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-link {
+            color: #374151;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header (Simple Public Version) -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse-jobs.html?mode=registered">Browse Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="work.html">Work</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="payment.html">Payment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="message.html">Message</a>
+                    </li>
+                </ul>
+
+                <div class="header-icons d-flex align-items-center">
+                    <a href="settings.html" class="btn-icon text-decoration-none">
+                        <i class="bi bi-gear"></i>
+                    </a>
+
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" id="notificationBtn">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                        <!-- Notification Popup -->
+                        <div class="notification-popup" id="notificationPopup">
+                            <div class="notification-header">
+                                <h4 class="notif-title">Notifications</h4>
+                                <a href="#" class="mark-read-link">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <!-- Item 1 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-icon-box">
+                                        <i class="bi bi-briefcase"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>New Job Alert:</strong> Product Designer needed
+                                            for Fintech project.</p>
+                                        <span class="notif-time">2 mins ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 2 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-avatar">
+                                        <!-- Placeholder for user avatar -->
+                                        <img src="assets/avatar-samu.jpg"
+                                            onerror="this.src='https://via.placeholder.com/40'" alt="User"
+                                            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Samu</strong> sent you a message regarding "House
+                                            for rent".</p>
+                                        <span class="notif-time">1 hour ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 3 -->
+                                <a href="#" class="notification-item">
+                                    <div class="notif-icon-box" style="background-color: #ecfdf5; color: #059669;">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Payment Received:</strong> N20,000 has been added
+                                            to your wallet.</p>
+                                        <span class="notif-time">Yesterday</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="notification-footer">
+                                <a href="#" class="view-all-link">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-dropdown dropdown">
+                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="dashboard.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="work.html">Saved Jobs</a></li>
+                            <li><a class="dropdown-item" href="help.html">Help</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pt-5">
+
+        <!-- FAQ Header -->
+        <div class="faq-header">
+            <h1 class="faq-title">FAQs</h1>
+            <p class="faq-subtitle">
+                Everything you need to know about the SMMS (Safeguarding Mobile Money Services).
+                Can't find the answer you're looking for? Please <a href="#" class="faq-link">chat to our friendly
+                    team</a>.
+            </p>
+        </div>
+
+        <!-- FAQ Grid -->
+        <div class="row faq-grid">
+            <!-- Item 1 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">What is Campus GIG?</h3>
+                <p class="faq-answer">
+                    SMMS (Safeguarding Mobile Money Services) is a centralized and transparent platform that enables
+                    real-time verification of phone number statuses (active, inactive, reassigned) to reduce fraud,
+                    enhance trust, and improve digital service delivery across sectors.
+                </p>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">Who can use this platform?</h3>
+                <p class="faq-answer">
+                    This platform is only for verified students of the school. You'll need your school email and student
+                    ID to sign up.
+                </p>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">How do I get verified?</h3>
+                <p class="faq-answer">
+                    Sign up with your school email and submit your student ID. Once verified, you can apply for jobs.
+                </p>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">How do I apply for a job?</h3>
+                <p class="faq-answer">
+                    Open a job, review the details, and submit a short proposal explaining why you're a good fit.
+                </p>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">Can I apply for multiple jobs at once?</h3>
+                <p class="faq-answer">
+                    Yes, you can apply to as many jobs as you want as long as you meet the requirements.
+                </p>
+            </div>
+
+            <!-- Item 6 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">How do I know if a client selected me?</h3>
+                <p class="faq-answer">
+                    You'll receive a message and see the job status update in your dashboard.
+                </p>
+            </div>
+
+            <!-- Item 7 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">How do I get paid?</h3>
+                <p class="faq-answer">
+                    Once your work is approved, your payment is sent to your wallet.
+                </p>
+            </div>
+
+            <!-- Item 8 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">When can I withdraw my money?</h3>
+                <p class="faq-answer">
+                    You can transfer funds from your wallet to your payout account at any time.
+                </p>
+            </div>
+
+            <!-- Item 9 -->
+            <div class="col-md-4 faq-item">
+                <h3 class="faq-question">When does a job officially start?</h3>
+                <p class="faq-answer">
+                    A job starts once both you and the client have signed the contract.
+                </p>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="contact-title">Still have questions?</h2>
+                    <p class="contact-text">Can't find the answer you're looking for? Please chat to our friendly team.
+                    </p>
+                    <button class="btn-primary-custom">Get in touch</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">How It Works</a>
+                <a href="browse-jobs.html" class="footer-link">Browse Jobs</a>
+                <a href="#" class="footer-link">Resources</a>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <iframe src="assets/avatar-samu.jpg" style="display: none;"></iframe>
+    <!-- Preload avatar for instant display if needed, though img tag handles it -->
+    <!-- Bootstrap JS -->
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/notifications.js"></script>
+
+</body>
+
+</html>

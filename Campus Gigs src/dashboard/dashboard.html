@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Campus Gigs</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/notifications.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+        }
+
+        /* Header Styles */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: #dbeafe;
+            padding: 60px 0 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-link {
+            color: #374151;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: #1e40af;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-icon:hover {
+            color: #1e40af;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Apply blue background to logo container to match design if needed, 
+           assuming the logo image itself handles it or we wrap it. 
+           Based on shared images, it looks like a blue square with 'CG' or similar. 
+        */
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6 !important;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .header-icons .btn-icon:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+        }
+
+        .profile-dropdown {
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e5e7eb;
+            /* Placeholder gray */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 24px;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Greeting Section */
+        .greeting-section {
+            margin-bottom: 32px;
+        }
+
+        .date-text {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .greeting-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* Incomplete Dashboard Styles */
+        .card-action {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            height: 100%;
+            transition: box-shadow 0.2s;
+        }
+
+        .card-action:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title-custom {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .card-text-custom {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .btn-dark-custom {
+            background-color: #111827;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-dark-custom:hover {
+            background-color: #1f2937;
+            color: #ffffff;
+        }
+
+        .illustration-container {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .illustration-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+        }
+
+        /* Complete Dashboard Styles */
+        .stats-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            height: 100%;
+        }
+
+        .stats-label {
+            display: flex;
+            align-items: center;
+            color: #4b5563;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .stats-label i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .stats-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .earnings-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .earning-title {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .main-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .growth-text {
+            color: #22c55e;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sub-earning-box {
+            background-color: #ffffff;
+            /* Or transparent if main card is white */
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .sub-earning-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+
+        .chart-container-card,
+        .projects-container-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            height: 100%;
+            background: #fff;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Project List Item */
+        .project-item {
+            display: flex;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .project-item:last-child {
+            border-bottom: none;
+        }
+
+        .project-icon-box {
+            width: 40px;
+            height: 40px;
+            background-color: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .project-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: #111827;
+        }
+
+        .project-details p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .project-due {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .btn-view-project {
+            color: #3b82f6;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: auto;
+            align-self: center;
+        }
+
+        /* Simple CSS for Bar Chart visualization if not using a library */
+        .simple-bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding-top: 20px;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40px;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+        }
+
+        .bar.pink {
+            background-color: #ec4899;
+        }
+
+        .bar.dark {
+            background-color: #4b5563;
+        }
+
+        .bar.purple {
+            background-color: #a855f7;
+        }
+
+        .bar.teal {
+            background-color: #2dd4bf;
+        }
+
+        .bar-label {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Helper for toggling */
+        .d-none {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse-jobs.html?mode=registered">Browse Jobs</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="work.html">Work</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="payment.html">Payment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="message.html">Message</a>
+                    </li>
+                </ul>
+
+                <div class="header-icons d-flex align-items-center">
+                    <a href="settings.html" class="btn-icon text-decoration-none">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" id="notificationBtn">
+                            <i class="bi bi-bell"></i>
+                            <!-- Optional unread indicator -->
+                            <!-- <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span> -->
+                        </button>
+                        <!-- Notification Popup -->
+                        <div class="notification-popup" id="notificationPopup">
+                            <div class="notification-header">
+                                <h4 class="notif-title">Notifications</h4>
+                                <a href="#" class="mark-read-link">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <!-- Item 1 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-icon-box">
+                                        <i class="bi bi-briefcase"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>New Job Alert:</strong> Product Designer needed
+                                            for Fintech project.</p>
+                                        <span class="notif-time">2 mins ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 2 -->
+                                <a href="#" class="notification-item unread">
+                                    <div class="notif-avatar">
+                                        <!-- Placeholder for user avatar -->
+                                        <img src="assets/avatar-samu.jpg"
+                                            onerror="this.src='https://via.placeholder.com/40'" alt="User"
+                                            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Samu</strong> sent you a message regarding "House
+                                            for rent".</p>
+                                        <span class="notif-time">1 hour ago</span>
+                                    </div>
+                                </a>
+                                <!-- Item 3 -->
+                                <a href="#" class="notification-item">
+                                    <div class="notif-icon-box" style="background-color: #ecfdf5; color: #059669;">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <p class="notif-text"><strong>Payment Received:</strong> N20,000 has been added
+                                            to your wallet.</p>
+                                        <span class="notif-time">Yesterday</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="notification-footer">
+                                <a href="#" class="view-all-link">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown dropdown">
+                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar" id="headerAvatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="dashboard.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="work.html">Saved Jobs</a></li>
+                            <li><a class="dropdown-item" href="help.html">Help</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container pb-5">
+
+        <!-- Start: Incomplete Profile View -->
+        <div id="incompleteView">
+            <div class="greeting-section">
+                <div class="date-text" id="currentDate">Monday, 29th December</div>
+                <h1 class="greeting-title" id="greeting-incomplete">Good Evening! Emma,</h1>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card-action">
+                        <h2 class="card-title-custom" id="user-name-display">Aisha Abubakar</h2>
+                        <p class="text-secondary mb-4">UI/UX Designer</p>
+                        <a href="#" class="btn-dark-custom">Complete profile</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-action">
+                        <h2 class="card-title-custom">Find your next campus gig</h2>
+                        <p class="card-text-custom">Browse verified opportunities that match your skills and schedule.
+                        </p>
+                        <a href="#" class="btn-dark-custom">Discover jobs</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Category Recommendations (From Image 1) -->
+            <!-- The image shows a 3rd card cut off, let's add a placeholder for it if needed or stick to 2 cols -->
+
+            <div class="illustration-container">
+                <!-- Illustration Placeholder -->
+                <img src="assets/illustration-working.jpg" alt="Working Illustration" class="illustration-image">
+
+            </div>
+        </div>
+        <!-- End: Incomplete Profile View -->
+
+
+        <!-- Start: Complete Profile View -->
+        <div id="completeView" class="d-none">
+            <div class="greeting-section">
+                <div class="date-text">Monday, 29th December</div>
+                <h1 class="greeting-title" id="greeting-complete">Good Evening! Emma,</h1>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-label"><i class="bi bi-check2"></i> Total projects</div>
+                        <div class="stats-value">5</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-label"><i class="bi bi-check2-all"></i> Projects completed</div>
+                        <div class="stats-value">3</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-label"><i class="bi bi-clock"></i> Ongoing projects</div>
+                        <div class="stats-value">2</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-label"><i class="bi bi-file-earmark"></i> Applications</div>
+                        <div class="stats-value">2</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings Section -->
+            <div class="earnings-card mb-5">
+                <div class="earning-title">Total Earning</div>
+                <div class="main-amount">N20,000</div>
+                <div class="growth-text mb-4">2.5% vs Last month</div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="sub-earning-box">
+                            <div class="earning-title">Pending</div>
+                            <div class="sub-earning-amount">N10,000</div>
+                            <div class="text-danger small">2.5% vs Last month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="sub-earning-box">
+                            <div class="earning-title">Withdrawable</div>
+                            <div class="sub-earning-amount">N20,000</div>
+                            <div class="growth-text small">2.5% vs Last month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Grid: Stats & Projects -->
+            <div class="row g-4">
+                <!-- Application Stats -->
+                <div class="col-lg-6">
+                    <div class="chart-container-card">
+                        <div class="section-header">
+                            <div class="section-title"><i class="bi bi-bar-chart me-2"></i> Application statistics</div>
+                            <button class="btn btn-sm btn-light">This week <i class="bi bi-chevron-down"></i></button>
+                        </div>
+
+                        <div class="simple-bar-chart">
+                            <div class="bar-group">
+                                <div class="bar pink" style="height: 80%;"></div>
+                                <span class="bar-label">Submitted</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar dark" style="height: 35%;"></div>
+                                <span class="bar-label">Rejected</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar purple" style="height: 15%;"></div>
+                                <span class="bar-label">Offer</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar teal" style="height: 60%;"></div>
+                                <span class="bar-label">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Project Overview -->
+                <div class="col-lg-6">
+                    <div class="projects-container-card">
+                        <div class="section-header">
+                            <div class="section-title"><i class="bi bi-clipboard me-2"></i> Active project overview
+                            </div>
+                        </div>
+
+                        <!-- Project List -->
+                        <div class="project-list">
+                            <!-- Item 1 -->
+                            <div class="project-item">
+                                <div class="project-icon-box">
+                                    <img src="assets/icon-branding.jpg" alt="P" style="width: 24px; height: 24px;">
+                                </div>
+                                <div class="project-details">
+                                    <h4>Branding Identity Design</h4>
+                                    <p>StudioX</p>
+                                    <div class="project-due">Due: Sep 12th 2025</div>
+                                </div>
+                                <a href="#" class="btn-view-project">View</a>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="project-item">
+                                <div class="project-icon-box">
+                                    <img src="assets/icon-branding.jpg" alt="P" style="width: 24px; height: 24px;">
+                                </div>
+                                <div class="project-details">
+                                    <h4>Branding Identity Design</h4>
+                                    <p>StudioX</p>
+                                    <div class="project-due">Due: Sep 12th 2025</div>
+                                </div>
+                                <a href="#" class="btn-view-project">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End: Complete Profile View -->
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </div>
+
+            <div class="footer-links">
+                <a href="#" class="footer-link">How It Works</a>
+                <a href="#" class="footer-link">Browse Jobs</a>
+                <a href="#" class="footer-link">Resources</a>
+            </div>
+
+            <div class="footer-social">
+                <a href="#" class="social-icon">
+                    <i class="bi bi-twitter-x"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="bi bi-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Dashboard Logic -->
+    <!-- Dashboard Logic -->
+    <script src="assets/dashboard.js"></script>
+    <script src="assets/notifications.js"></script>
+</body>
+
+</html>

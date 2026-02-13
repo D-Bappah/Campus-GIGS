@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account Setup - Services</title>
+  <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #fff;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    .onboarding-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 80px;
+      min-height: 100vh;
+    }
+
+    .onboarding-left {
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+
+    /* Header */
+    .onboarding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+      width: 100%;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #111827;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .back-link i {
+      font-size: 18px;
+    }
+
+    .back-link:hover {
+      color: #3b82f6;
+    }
+
+    .header-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .login-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .login-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Progress */
+    .progress-wrapper {
+      margin-bottom: 32px;
+    }
+
+    .progress-indicator {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #111827;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar.step-1 {
+      width: 25%;
+    }
+
+    .progress-bar.step-2 {
+      width: 50%;
+    }
+
+    .progress-bar.step-3 {
+      width: 75%;
+    }
+
+    .progress-bar.step-4 {
+      width: 100%;
+    }
+
+    /* Form Styles */
+    .onboarding-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .onboarding-subtitle {
+      color: #6b7280;
+      font-size: 16px;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+
+    /* Service Cards */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .service-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      background: #f9fafb;
+      min-height: 140px;
+    }
+
+    .service-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    }
+
+    .service-card.selected {
+      border-color: #3b82f6;
+      background: white;
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .service-icon img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .service-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .service-description {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .service-checkbox {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .service-card.selected .service-checkbox {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    .service-card.selected .service-checkbox::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Buttons */
+    .form-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .form-actions .btn-primary {
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-secondary {
+      text-align: center;
+      margin-left: 0;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-secondary {
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 16px;
+    }
+
+    .btn-secondary:hover {
+      color: #3b82f6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .onboarding-container {
+        grid-template-columns: 1fr;
+      }
+
+      .onboarding-left {
+        padding: 40px 60px;
+        max-width: 100%;
+      }
+
+      .onboarding-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .onboarding-left {
+        padding: 30px 20px;
+      }
+
+      .onboarding-title {
+        font-size: 28px;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .onboarding-header {
+        margin-bottom: 30px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .onboarding-left {
+        padding: 20px 15px;
+      }
+
+      .onboarding-title {
+        font-size: 24px;
+      }
+
+      .onboarding-subtitle {
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="onboarding-container">
+    <div class="onboarding-left">
+      <div class="onboarding-header">
+        <a href="academic-info.html" class="back-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <div class="header-title">Account Setup</div>
+        <a href="../Login and authentification/login.html" class="login-link">Log In</a>
+      </div>
+
+      <div class="progress-wrapper">
+        <div class="progress-indicator">3/4 steps</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar step-3"></div>
+        </div>
+      </div>
+
+      <h1 class="onboarding-title">What can you offer?</h1>
+      <p class="onboarding-subtitle">What service can you offer the community?</p>
+
+      <form id="servicesForm">
+        <div class="services-grid">
+          <div class="service-card" data-service="tutoring">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/tutoring-icon.png" alt="Tutoring icon">
+            </div>
+            <div class="service-title">Tutoring/Academic help</div>
+            <div class="service-description">Academic Coaching</div>
+          </div>
+
+          <div class="service-card" data-service="design">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/design-icon.png" alt="Design icon">
+            </div>
+            <div class="service-title">Design & Creativity</div>
+            <div class="service-description">Think. Create. Solve</div>
+          </div>
+
+          <div class="service-card" data-service="writing">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/writing-icon.png" alt="Writing icon">
+            </div>
+            <div class="service-title">Writing & Editing</div>
+            <div class="service-description">Edit for Impact</div>
+          </div>
+
+          <div class="service-card" data-service="programming">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/programming-icon.png" alt="Programming icon">
+            </div>
+            <div class="service-title">Programming & Tech</div>
+            <div class="service-description">Full-Stack Development</div>
+          </div>
+
+          <div class="service-card" data-service="marketing">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/marketing-icon.png" alt="Marketing icon">
+            </div>
+            <div class="service-title">Marketing & Social Media</div>
+            <div class="service-description">Grow Your Audience</div>
+          </div>
+
+          <div class="service-card" data-service="research">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/research-icon.png" alt="Research icon">
+            </div>
+            <div class="service-title">Research Assistance</div>
+            <div class="service-description">Thorough Analysis</div>
+          </div>
+
+          <div class="service-card" data-service="events">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/events-icon.png" alt="Events icon">
+            </div>
+            <div class="service-title">Event Planning</div>
+            <div class="service-description">Detail-Driven Events</div>
+          </div>
+
+          <div class="service-card" data-service="admin">
+            <div class="service-checkbox"></div>
+            <div class="service-icon">
+              <img src="asset/admin-icon.png" alt="Admin icon">
+            </div>
+            <div class="service-title">Administrative Support</div>
+            <div class="service-description">Support That Scales</div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Next</button>
+          <a href="#" class="btn-secondary" onclick="skipForNow()">Skip For Now</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="asset/services.js"></script>
+</body>
+
+</html>
