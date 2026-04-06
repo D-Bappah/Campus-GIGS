@@ -80,4 +80,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-window.goBack = () => window.location.href = '../Login and authentification/login.html';
+window.goBack = () => window.location.href = '../landing page/Home.html';

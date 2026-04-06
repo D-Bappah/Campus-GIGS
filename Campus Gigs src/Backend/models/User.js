@@ -31,7 +31,18 @@ const UserSchema = new mongoose.Schema({
     hourlyRate: String,
     linkedin: String,
     github: String,
-    resumeName: String
+    resumeName: String,
+
+    onboardingComplete: { type: Boolean, default: false },
+// For New User Registration
+    otp: { type: String },
+    otpExpires: { type: Date },
+
+    // For Password Reset
+    resetPasswordOtp: { type: String },
+    resetPasswordExpires: { type: Date },
+    
+    isVerified: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);
