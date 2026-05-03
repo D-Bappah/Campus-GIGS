@@ -92,5 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
+
     }); 
 });
