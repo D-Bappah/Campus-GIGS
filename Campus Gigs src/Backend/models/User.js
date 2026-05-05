@@ -42,7 +42,20 @@ const UserSchema = new mongoose.Schema({
     resetPasswordOtp: { type: String },
     resetPasswordExpires: { type: Date },
     
-    isVerified: { type: Boolean, default: false }
+    isVerified: { type: Boolean, default: false },
+
+    githubId: {
+        type: String,
+        default: null
+    },
+    githubUsername: {
+        type: String,
+        default: null
+    },
+    githubConnected: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model('User', UserSchema);

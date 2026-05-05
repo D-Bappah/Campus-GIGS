@@ -540,21 +540,19 @@
                             class="bi bi-pencil-square"></i></button>
                 </div>
 
-                <div class="profile-pic-large">
-                    AA
-                    <div class="edit-pic-icon"><i class="bi bi-pencil-fill"></i></div>
-                </div>
+                <div class="profile-pic-large" id="profileInitials">
+    AA
+    <div class="edit-pic-icon"><i class="bi bi-pencil-fill"></i></div>
+</div>
 
                 <div class="mb-4">
                     <label class="form-label">Bio</label>
-                    <textarea class="form-control" rows="4"
-                        readonly>I'm a UI/UX designer building practical, user-focused solutions through real projects. While balancing my studies, I collaborate with teams to design interfaces that are simple, intuitive, and effective.</textarea>
+                    <textarea class="form-control" rows="4" id="bioInput" readonly>Loading...</textarea>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label">Role</label>
-                    <input type="text" class="form-control" value="Aisha" readonly>
-                </div>
+                    <input type="text" class="form-control" id="roleInput" value="Loading..." readonly>
 
                 <div>
                     <label class="form-label">Skills</label>
@@ -580,73 +578,69 @@
                     <label class="form-label">Email</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
-                        <input type="email" class="form-control" value="Aisha Abubakar" readonly>
+                        <input type="email" class="form-control" id="emailInput" value="Loading..." readonly>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">First name</label>
-                        <input type="text" class="form-control" value="Aisha" readonly>
+                        <input type="text" class="form-control" id="firstNameInput" value="Loading..." readonly>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Last name</label>
-                        <input type="text" class="form-control" value="Abubakar" readonly>
+                        <input type="text" class="form-control" id="lastNameInput" value="Loading..." readonly>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Display name</label>
-                    <input type="text" class="form-control" value="Aisha Abubakar" readonly>
+                    <input type="text" class="form-control" id="displayNameInput" value="Loading..." readonly>
                 </div>
             </div>
 
             <!-- Account Information -->
-            <div class="settings-section">
-                <div class="section-header">
-                    <h2 class="section-title">Account Information</h2>
-                    <!-- Merged Resume here as per plan -->
-                    <button class="btn-edit"><i class="bi bi-pencil-square"></i></button>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Skill Proficiency</label>
-                    <div><span class="badge-skill">Entry Level</span></div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Hours Per Week</label>
-                    <div><span class="badge-skill">Job Offered</span></div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Preferred Work Type</label>
-                    <div>
-                        <span class="badge-skill">Hybrid</span>
-                        <span class="badge-skill">Contract</span>
-                        <span class="badge-skill">Remote</span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Hourly Range</label>
-                    <div><span class="badge-skill">N1500-N2500</span></div>
-                </div>
-            </div>
-
+           <div class="settings-section" id="section-account-info">
+    <div class="section-header">
+        <h2 class="section-title">Account Information</h2>
+        <button class="btn-edit" onclick="toggleEdit('section-account-info')"><i class="bi bi-pencil-square"></i></button>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Skill Proficiency</label>
+        <input type="text" class="form-control" id="skillProficiencyInput" value="Loading..." readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Hours Per Week</label>
+        <input type="text" class="form-control" id="hoursPerWeekInput" value="Loading..." readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Preferred Work Type</label>
+        <input type="text" class="form-control" id="workTypeInput" value="Loading..." readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Hourly Range</label>
+        <input type="text" class="form-control" id="hourlyRangeInput" value="Loading..." readonly>
+    </div>
+</div>
             <!-- Academic Information -->
-            <div class="settings-section">
-                <h2 class="section-title mb-4">Academic Information</h2>
-                <div class="mb-3">
-                    <label class="form-label">Department</label>
-                    <div class="fw-bold">Computer Science</div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Year of study</label>
-                    <div class="fw-bold">200 Level</div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Expected year of Graduation</label>
-                    <div class="fw-bold">August 2026</div>
-                </div>
-            </div>
+            <div class="settings-section" id="section-academic-info">
+    <div class="section-header">
+        <h2 class="section-title">Academic Information</h2>
+        <button class="btn-edit" onclick="toggleEdit('section-academic-info')"><i class="bi bi-pencil-square"></i></button>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Department</label>
+        <input type="text" class="form-control" id="departmentInput" value="Loading..." readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Year of study</label>
+        <input type="text" class="form-control" id="yearOfStudyInput" value="Loading..." readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Expected year of Graduation</label>
+        <input type="text" class="form-control" id="graduationYearInput" value="Loading..." readonly>
+    </div>
+</div>
 
             <!-- Linked Accounts -->
             <div class="settings-section">

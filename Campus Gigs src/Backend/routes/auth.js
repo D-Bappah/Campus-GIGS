@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// --- 1. REGISTER (Updated with OTP) ---
+// 1. REGISTER (Updated with OTP)
 router.post('/register', async (req, res) => {
     try {
         const { email, studentId, password } = req.body;
@@ -18,10 +18,9 @@ router.post('/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // --- NEW OTP LOGIC STARTS HERE ---
+        // OTP LOGIC STARTS HERE
         const verificationOtp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes from now
-        // ---------------------------------
 
         const newUser = new User({
             email,
@@ -34,7 +33,7 @@ router.post('/register', async (req, res) => {
 
         await newUser.save();
 
-        // DEV LOG: Since you haven't set up Nodemailer yet, see the code in your console!
+        // DEV LOG:Haven't set up Nodemailer yet, see the code in your console!
         console.log(`[AUTH] Verification Code for ${email}: ${verificationOtp}`);
 
         res.status(201).json({ message: "Registration successful. Please verify your email.", email: newUser.email });
@@ -45,7 +44,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// --- 2. LOGIN ---
+// 2. LOGIN
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -76,7 +75,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// --- 3. COMPLETE ONBOARDING ---
+// 3. COMPLETE ONBOARDING
 router.post('/complete-onboarding', async (req, res) => {
     try {
         const { email, onboardingData } = req.body;
@@ -124,7 +123,7 @@ router.post('/complete-onboarding', async (req, res) => {
     }
 });
 
-// --- 5. FORGOT PASSWORD (Reset Flow) ---
+// 5. FORGOT PASSWORD (Reset Flow)
 router.post('/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -146,7 +145,7 @@ router.post('/forgot-password', async (req, res) => {
         res.status(500).json({ message: "Error" });
     }
 });
-// --- 6. VERIFY PASSWORD RESET OTP ---
+// 6. VERIFY PASSWORD RESET OTP
 router.post('/verify-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -162,7 +161,7 @@ router.post('/verify-otp', async (req, res) => {
     }
 });
 
-// --- 7. ACTUAL PASSWORD RESET ---
+// 7. ACTUAL PASSWORD RESET
 router.post('/reset-password', async (req, res) => {
     try {
         const { email, password } = req.body;

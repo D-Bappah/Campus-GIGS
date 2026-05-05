@@ -2,11 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const passport = require('passport');
+require('./config/passport');
 
 const app = express();
 
 //
-// Define exactly who is allowed to talk to your API
+// Defines exactly who is allowed to talk to your API (whitelist)
 const allowedOrigins = [
     'http://127.0.0.1:5500',           // Standard Live Server IP
     'http://localhost:5500',           // Standard Live Server Localhost
@@ -37,10 +39,12 @@ app.use(cors(corsOptions));
 
 app.use(express.static('SIgn up.html'));
 
+app.use(passport.initialize());
+
 // 2. Import Routes
 const authRoutes = require('./routes/auth');
 const gigsRouter = require('./routes/gigs');
-app.use('/api/users', require('./routes/users'));
+app.use('/api/users', require('./routes/user'));
 
 // 3. Use Routes
 app.use('/api/auth', authRoutes);
