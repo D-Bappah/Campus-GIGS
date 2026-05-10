@@ -45,6 +45,7 @@ app.use(passport.initialize());
 const authRoutes = require('./routes/auth');
 const gigsRouter = require('./routes/gigs');
 app.use('/api/users', require('./routes/user'));
+app.use('/api/jobs', require('./routes/jobs'));
 
 // 3. Use Routes
 app.use('/api/auth', authRoutes);

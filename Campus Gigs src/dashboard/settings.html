@@ -652,12 +652,12 @@
                         <i class="bi bi-github account-icon"></i>
                         <div>
                             <div class="fw-bold" style="font-size:14px;">GitHub</div>
-                            <div class="text-secondary" style="font-size:12px;">Connected. You can sign in using
-                                your
-                                Google account.</div>
+                            <!-- Added an ID here so we can update the text dynamically -->
+                            <div class="text-secondary" id="githubStatusText" style="font-size:12px;">Not connected.</div>
                         </div>
                     </div>
-                    <button class="btn-disconnect">Disconnect</button>
+                    <!-- Added an ID and changed class to a generic btn-link-action -->
+                    <button class="btn-disconnect" id="btnGithubAction">Connect</button>
                 </div>
 
                 <div class="linked-account-item">

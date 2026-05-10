@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Declare global ID variable at the very top
+    let currentUserId = null;
 
     // --- Profile Data Fetching Logic ---
     const loadUserProfile = async () => {
@@ -11,61 +13,171 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const response = await fetch('http://localhost:5000/api/users/me', {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (!response.ok) throw new Error('Failed to fetch profile data');
 
             const user = await response.json();
+            currentUserId = user._id; // Save the ID immediately for the OAuth button
 
-            // 1. Populate Personal Info
-            document.getElementById('emailInput').value = user.email || '';
-            document.getElementById('firstNameInput').value = user.firstName || '';
-            document.getElementById('lastNameInput').value = user.lastName || '';
-            document.getElementById('displayNameInput').value = user.displayName || `${user.firstName} ${user.lastName}`;
+            // Populate Personal Info (With safety checks using 'if')
+            if(document.getElementById('emailInput')) document.getElementById('emailInput').value = user.email || '';
+            if(document.getElementById('firstNameInput')) document.getElementById('firstNameInput').value = user.firstName || '';
+            if(document.getElementById('lastNameInput')) document.getElementById('lastNameInput').value = user.lastName || '';
+            if(document.getElementById('displayNameInput')) document.getElementById('displayNameInput').value = user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim();
 
-            // 2. Populate Profile Info
-            document.getElementById('bioInput').value = user.shortBio || 'No bio provided yet.';
-            document.getElementById('roleInput').value = user.department || 'Student'; // Or skillProficiency
+            // Populate Profile Info
+            if(document.getElementById('bioInput')) document.getElementById('bioInput').value = user.shortBio || 'No bio provided yet.';
+            if(document.getElementById('roleInput')) document.getElementById('roleInput').value = user.skillProficiency || 'Student';
 
-            // 3. Update Profile Initials
+            // Populate Account Info
+            if(document.getElementById('skillProficiencyInput')) document.getElementById('skillProficiencyInput').value = user.skillProficiency || 'Beginner';
+            if(document.getElementById('hoursPerWeekInput')) document.getElementById('hoursPerWeekInput').value = user.hoursPerWeek || '0 - 10 hours';
+            if(document.getElementById('workTypeInput')) document.getElementById('workTypeInput').value = user.preferredWorkType || 'Remote';
+            if(document.getElementById('hourlyRangeInput')) document.getElementById('hourlyRangeInput').value = user.hourlyRange || 'N1500 - N2500';
+
+            // Populate Academic Info
+            if(document.getElementById('departmentInput')) document.getElementById('departmentInput').value = user.department || 'Not specified';
+            if(document.getElementById('yearOfStudyInput')) document.getElementById('yearOfStudyInput').value = user.yearOfStudy || '100 Level';
+            if(document.getElementById('graduationYearInput')) document.getElementById('graduationYearInput').value = user.expectedGraduation || 'Not specified';
+
+            // Update GitHub UI
+            const githubStatusText = document.getElementById('githubStatusText');
+            const btnGithubAction = document.getElementById('btnGithubAction');
+            
+            if (githubStatusText && btnGithubAction) {
+                if (user.githubConnected) {
+                    githubStatusText.textContent = 'Connected. You can sign in using your GitHub account.';
+                    btnGithubAction.textContent = 'Disconnect';
+                    btnGithubAction.classList.add('btn-disconnect');
+                    btnGithubAction.classList.remove('btn-primary');
+                } else {
+                    githubStatusText.textContent = 'Not connected.';
+                    btnGithubAction.textContent = 'Connect';
+                    btnGithubAction.classList.remove('btn-disconnect');
+                    btnGithubAction.classList.add('btn-primary', 'btn-sm');
+                }
+            }
+
+            // Update Profile Initials
             const initials = ((user.firstName?.[0] || 'S') + (user.lastName?.[0] || '')).toUpperCase();
             const initialsDiv = document.getElementById('profileInitials');
             if(initialsDiv) {
-                // Be careful to keep the edit icon inside the div!
                 initialsDiv.innerHTML = `${initials} <div class="edit-pic-icon"><i class="bi bi-pencil-fill"></i></div>`;
             }
 
         } catch (error) {
             console.error('Error loading profile:', error);
-            // Optional: Show a small error toast/alert to the user here
         }
-        // 4. Populate Account Info
-    document.getElementById('skillProficiencyInput').value = user.skillProficiency || 'Beginner';
-    document.getElementById('hoursPerWeekInput').value = user.hoursPerWeek || '0 - 10 hours';
-    document.getElementById('workTypeInput').value = user.preferredWorkType || 'Remote';
-    document.getElementById('hourlyRangeInput').value = user.hourlyRange || 'N1500 - N2500';
-
-    // 5. Populate Academic Info
-    document.getElementById('departmentInput').value = user.department || 'Not specified';
-    document.getElementById('yearOfStudyInput').value = user.yearOfStudy || '100 Level';
-    document.getElementById('graduationYearInput').value = user.expectedGraduation || 'Not specified';
-    
-    // 6. Check Linked Accounts (Visual toggle based on DB booleans)
-    const githubStatus = document.querySelector('.bi-github').nextElementSibling.querySelector('.text-secondary');
-    githubStatus.textContent = user.githubConnected ? 'Connected.' : 'Not connected.';
     };
-    
-document.querySelector('.btn-connect-github').addEventListener('click', async () => {
-    // Decode the JWT to get the user's ID (or fetch it from your /me route)
-    const userId = getUserIdFromSomewhere(); 
-    
-    // Redirect the browser entirely to your Express OAuth route
-    window.location.href = `http://localhost:5000/api/auth/github?userId=${userId}`;
-});
+
+    // Execute the fetch immediately
+    loadUserProfile();
+
+    // --- Save Profile Data to Backend ---
+    const saveProfileData = async (sectionId) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        let payload = {};
+
+        if (sectionId === 'section-my-profile') {
+            payload = {
+                shortBio: document.getElementById('bioInput')?.value,
+                skillProficiency: document.getElementById('roleInput')?.value
+            };
+        } else if (sectionId === 'section-personal-info') {
+            payload = {
+                firstName: document.getElementById('firstNameInput')?.value,
+                lastName: document.getElementById('lastNameInput')?.value,
+                displayName: document.getElementById('displayNameInput')?.value
+            };
+        } else if (sectionId === 'section-account-info') {
+            payload = {
+                skillProficiency: document.getElementById('skillProficiencyInput')?.value,
+                hoursPerWeek: document.getElementById('hoursPerWeekInput')?.value,
+                preferredWorkType: document.getElementById('workTypeInput')?.value,
+                hourlyRange: document.getElementById('hourlyRangeInput')?.value
+            };
+        } else if (sectionId === 'section-academic-info') {
+            payload = {
+                department: document.getElementById('departmentInput')?.value,
+                yearOfStudy: document.getElementById('yearOfStudyInput')?.value,
+                expectedGraduation: document.getElementById('graduationYearInput')?.value
+            };
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/users/me', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('Failed to update profile');
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            alert("Failed to save changes. Please try again.");
+        }
+    };
+
+    // --- Profile Editing Logic (Pencil/Checkmark Toggle) ---
+    window.toggleEdit = async function (sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        const inputs = section.querySelectorAll('input, textarea');
+        if (inputs.length === 0) return; // Stop if no inputs are found
+        
+        const btnIcon = section.querySelector('.btn-edit i');
+        const isCurrentlyReadonly = inputs[0].hasAttribute('readonly');
+
+        if (isCurrentlyReadonly) {
+            // Enable Edit Mode
+            inputs.forEach(input => {
+                input.removeAttribute('readonly');
+                input.classList.add('bg-white'); 
+            });
+            btnIcon.classList.remove('bi-pencil-square');
+            btnIcon.classList.add('bi-check-lg');
+            btnIcon.style.color = 'green';
+            inputs[0].focus();
+        } else {
+            // Save Data to Database
+            await saveProfileData(sectionId);
+
+            // Lock the inputs back up
+            inputs.forEach(input => {
+                input.setAttribute('readonly', true);
+                input.classList.remove('bg-white');
+            });
+            btnIcon.classList.remove('bi-check-lg');
+            btnIcon.classList.add('bi-pencil-square');
+            btnIcon.style.color = '';
+        }
+    };
+
+    // --- GitHub Button Logic ---
+    const btnGithubAction = document.getElementById('btnGithubAction');
+    if (btnGithubAction) {
+        btnGithubAction.addEventListener('click', () => {
+            if (btnGithubAction.textContent === 'Connect') {
+                if (currentUserId) {
+                    window.location.href = `http://localhost:5000/api/auth/github?userId=${currentUserId}`;
+                } else {
+                    alert("Profile is still loading. Please wait a second.");
+                }
+            } else {
+                if(confirm("Are you sure you want to disconnect your GitHub account?")) {
+                    alert("Disconnect functionality coming soon!"); 
+                }
+            }
+        });
+    }
 
     // Execute the fetch as soon as the page loads
     loadUserProfile();
@@ -105,98 +217,6 @@ document.querySelector('.btn-connect-github').addEventListener('click', async ()
     if (savedTab) {
         switchTab(savedTab);
     }
-// Save Profile Data to Backend
-    const saveProfileData = async (sectionId) => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        // Prepare the payload based on which section is being saved
-        let payload = {};
-
-        if (sectionId === 'section-my-profile') {
-            payload = {
-                shortBio: document.getElementById('bioInput').value,
-                skillProficiency: document.getElementById('roleInput').value
-            };
-        } else if (sectionId === 'section-personal-info') {
-            payload = {
-                firstName: document.getElementById('firstNameInput').value,
-                lastName: document.getElementById('lastNameInput').value,
-                displayName: document.getElementById('displayNameInput').value
-            };
-            } else if (sectionId === 'section-account-info') {
-        payload = {
-            skillProficiency: document.getElementById('skillProficiencyInput').value,
-            hoursPerWeek: document.getElementById('hoursPerWeekInput').value,
-            preferredWorkType: document.getElementById('workTypeInput').value,
-            hourlyRange: document.getElementById('hourlyRangeInput').value
-        };
-    } else if (sectionId === 'section-academic-info') {
-        payload = {
-            department: document.getElementById('departmentInput').value,
-            yearOfStudy: document.getElementById('yearOfStudyInput').value,
-            expectedGraduation: document.getElementById('graduationYearInput').value
-        };
-    
-        }
-
-        try {
-            const response = await fetch('http://localhost:5000/api/users/me', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error('Failed to update profile');
-
-            const updatedUser = await response.json();
-            console.log('Profile updated successfully:', updatedUser);
-            
-            // Optional: You could show a success toast/alert here
-            
-        } catch (error) {
-            console.error('Error saving profile:', error);
-            alert("Failed to save changes. Please try again.");
-        }
-    };
-    // --- Profile Editing Logic ---
-    window.toggleEdit = async function (sectionId) {
-        const section = document.getElementById(sectionId);
-        if (!section) return;
-
-        const inputs = section.querySelectorAll('input, textarea');
-        const btnIcon = section.querySelector('.btn-edit i');
-
-        // Check state based on first input
-        const isCurrentlyReadonly = inputs[0].hasAttribute('readonly');
-
-        if (isCurrentlyReadonly) {
-            // Enable Edit Mode
-            inputs.forEach(input => {
-                input.removeAttribute('readonly');
-                input.classList.add('bg-white'); 
-            });
-            btnIcon.classList.remove('bi-pencil-square');
-            btnIcon.classList.add('bi-check-lg');
-            btnIcon.style.color = 'green';
-            inputs[0].focus();
-        } else {
-            // Save Data to Database First
-            await saveProfileData(sectionId); // <--- TRIGGER THE API CALL HERE
-
-            // Disable Edit Mode (Lock it back up)
-            inputs.forEach(input => {
-                input.setAttribute('readonly', true);
-                input.classList.remove('bg-white');
-            });
-            btnIcon.classList.remove('bi-check-lg');
-            btnIcon.classList.add('bi-pencil-square');
-            btnIcon.style.color = '';
-        }
-    };
 
     // --- Payout Account Logic ---
     const btnSaveAccount = document.getElementById('btn-save-account');

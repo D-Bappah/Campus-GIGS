@@ -693,88 +693,22 @@
                 <div class="col-lg-9">
 
                     <!-- Job Item 1 -->
-                    <div class="job-card">
-                        <div class="job-posted-time">Posted 7 hours ago</div>
-                        <div class="job-header">
-                            <img src="../Login and authentification/assets/logo.png" class="company-logo" alt="Company">
-                            <!-- Keeping same logo for now as placeholder for company logos -->
-                            <div>
-                                <h4 class="job-title">Product Designer</h4>
-                                <div class="job-meta-row">
-                                    <span>Hourly: $25 - $50</span>
-                                    <span class="job-meta-dot"></span>
-                                    <span>Beginner</span>
-                                    <span class="job-meta-dot"></span>
-                                    <span>3 weeks</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="job-desc">
-                            Looking for a figma designer who is experiences knows how to prototype and has a good
-                            knowledge of UI/UX - looking for someone ready and capable to dedicating time and work - has
-                            the potential long term steady work
-                        </p>
-                        <div class="job-tags">
-                            <span class="job-tag">UI/UX</span>
-                            <span class="job-tag">research</span>
-                            <span class="job-tag">strategy</span>
-                            <span class="job-tag">problem-solving</span>
-                        </div>
-                        <div class="job-location">
-                            <i class="bi bi-geo-alt"></i> Remote
-                        </div>
-                        <!-- Apply Button will be handled by JS click on card or specific button (Visual doesn't show button in list, usually whole card clickable or hover) -->
-                        <div class="mt-3">
-                            <button class="btn btn-primary" onclick="handleApplyClick()">Apply Now</button>
-                        </div>
-                    </div>
-
-                    <!-- Job Item 2 -->
-                    <div class="job-card">
-                        <div class="job-posted-time">Posted 5 hours ago</div>
-                        <div class="job-header">
-                            <img src="../Login and authentification/assets/logo.png" class="company-logo" alt="Company">
-                            <div>
-                                <h4 class="job-title">UI/UX Designer</h4>
-                                <div class="job-meta-row">
-                                    <span>Hourly: $70 - $100</span>
-                                    <span class="job-meta-dot"></span>
-                                    <span>Intermediate</span>
-                                    <span class="job-meta-dot"></span>
-                                    <span>2 weeks</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="job-desc">
-                            Designs intuitive, user-centered digital experiences by combining visual creativity with
-                            usability. Focuses on understanding user needs...
-                        </p>
-                        <div class="job-tags">
-                            <span class="job-tag">UI/UX Designer</span>
-                            <span class="job-tag">Product Designer</span>
-                            <span class="job-tag">Figma</span>
-                        </div>
-                        <div class="job-location">
-                            <i class="bi bi-geo-alt"></i> On campus
-                        </div>
-                        <div class="mt-3">
-                            <button class="btn btn-primary">Apply Now</button>
-                        </div>
-                    </div>
+                    <div id="jobs-container">
+        <div class="text-center text-secondary py-5">
+            <div class="spinner-border text-primary mb-3" role="status"></div>
+            <p>Loading campus gigs...</p>
+        </div>
+    </div>
 
 
 
                     <!-- Pagination -->
-                    <div class="pagination-container">
-                        <a href="#" class="page-link"><i class="bi bi-arrow-left"></i> Previous</a>
-                        <a href="#" class="page-link active">1</a>
-                        <a href="#" class="page-link">2</a>
-                        <a href="#" class="page-link">3</a>
-                        <span class="text-muted">...</span>
-                        <a href="#" class="page-link">67</a>
-                        <a href="#" class="page-link">68</a>
-                    </div>
-                </div>
+                    <div id="jobs-container">
+        </div>
+
+    <div id="pagination-container" class="pagination-container mt-4 mb-5">
+        </div>
+</div>
             </div>
         </div>
     </div>
