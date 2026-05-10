@@ -101,11 +101,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        /* Apply blue background to logo container to match design if needed, 
-           assuming the logo image itself handles it or we wrap it. 
-           Based on shared images, it looks like a blue square with 'CG' or similar. 
-        */
-
         .nav-link {
             font-weight: 500;
             color: #1f2937 !important;
@@ -541,20 +536,30 @@
                 <h1 class="greeting-title" id="greeting-incomplete">Good Evening! Emma,</h1>
             </div>
 
+            <!-- MODIFICATION 1: Update the row cards to include the client action card and role display ID -->
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card-action">
                         <h2 class="card-title-custom" id="user-name-display">Aisha Abubakar</h2>
-                        <p class="text-secondary mb-4">UI/UX Designer</p>
+                        <p class="text-secondary mb-4" id="user-role-display">UI/UX Designer</p>
                         <a href="../onboarding/personal-info.html" class="btn-dark-custom">Complete profile</a>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- Freelancer action card -->
+                <div class="col-md-6" id="freelancerActionCard">
                     <div class="card-action">
                         <h2 class="card-title-custom">Find your next campus gig</h2>
                         <p class="card-text-custom">Browse verified opportunities that match your skills and schedule.
                         </p>
                         <a href="browse-jobs.html?mode=registered" class="btn-dark-custom">Discover jobs</a>
+                    </div>
+                </div>
+                <!-- Client action card -->
+                <div class="col-md-6 d-none" id="clientActionCard">
+                    <div class="card-action">
+                        <h2 class="card-title-custom">Hire Top Campus Talent</h2>
+                        <p class="card-text-custom">Post a job and connect with skilled students ready to work.</p>
+                        <a href="upload-job.html" class="btn-dark-custom">Post a Job</a>
                     </div>
                 </div>
             </div>
@@ -733,14 +738,32 @@
     </footer>
 
     <!-- Bootstrap JS -->
-
     <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
 
-
-    <!-- Dashboard Logic -->
     <!-- Dashboard Logic -->
     <script src="assets/dashboard.js"></script>
     <script src="assets/notifications.js"></script>
+
+    <!-- MODIFICATION 2: Add this Client Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('userRole') || 'freelancer';
+            
+            const fCard = document.getElementById('freelancerActionCard');
+            const cCard = document.getElementById('clientActionCard');
+            const roleDisplay = document.getElementById('user-role-display');
+            
+            if (role === 'client') {
+                if (fCard) fCard.classList.add('d-none');
+                if (cCard) cCard.classList.remove('d-none');
+                if (roleDisplay) roleDisplay.textContent = 'Client Account';
+            } else {
+                if (fCard) fCard.classList.remove('d-none');
+                if (cCard) cCard.classList.add('d-none');
+                if (roleDisplay) roleDisplay.textContent = 'UI/UX Designer';
+            }
+        });
+    </script>
 </body>
 
 </html>
