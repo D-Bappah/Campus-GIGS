@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Post a Job - Campus Gigs</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/notifications.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb; /* Slightly off-white for better form contrast */
+            color: #111827;
+        }
+
+        /* Header Styles */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6 !important;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .header-icons .btn-icon:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+        }
+
+        .profile-dropdown {
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 24px;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Form Card Styles */
+        .upload-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 40px;
+        }
+
+        .upload-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtitle {
+            color: #6b7280;
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-dark-custom {
+            background-color: #111827;
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            font-size: 15px;
+            border: none;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        .btn-dark-custom:hover {
+            background-color: #1f2937;
+            color: #ffffff;
+        }
+
+        .btn-outline-custom {
+            background-color: transparent;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: #dbeafe;
+            padding: 60px 0 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-link {
+            color: #374151;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: #1e40af;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-icon:hover {
+            color: #1e40af;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+        
+        .budget-input-wrapper {
+            position: relative;
+        }
+        
+        .budget-input-wrapper .form-control {
+            padding-left: 32px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Access Control Script -->
+    <script>
+        // Restrict access to clients only
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('userRole');
+            if (role === 'freelancer') {
+                alert("Access Denied: Only clients can post jobs.");
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse-jobs.html?mode=registered">Browse Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="work.html">Work</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="payment.html">Payment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="message.html">Message</a>
+                    </li>
+                </ul>
+
+                <div class="header-icons d-flex align-items-center">
+                    <a href="settings.html" class="btn-icon text-decoration-none">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" id="notificationBtn">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                    </div>
+                    <div class="profile-dropdown dropdown">
+                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar" id="headerAvatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="dashboard.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="work.html">Saved Jobs</a></li>
+                            <li><a class="dropdown-item" href="help.html">Help</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="dashboard.html" class="text-decoration-none text-secondary">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Post a Job</li>
+                    </ol>
+                </nav>
+
+                <div class="upload-card">
+                    <h1 class="upload-title">Post a New Job</h1>
+                    <p class="upload-subtitle">Provide details about the gig to attract the right talent.</p>
+
+                    <form id="jobUploadForm" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+                        
+                        <div class="mb-4">
+                            <label for="jobTitle" class="form-label">Job Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="jobTitle" placeholder="e.g. Need a UI/UX Designer for a Mobile App" required>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="jobCategory" class="form-label">Category <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jobCategory" required>
+                                    <option value="" selected disabled>Select a category</option>
+                                    <option value="design">Design & Creative</option>
+                                    <option value="development">Web & App Development</option>
+                                    <option value="writing">Writing & Translation</option>
+                                    <option value="marketing">Digital Marketing</option>
+                                    <option value="video">Video & Animation</option>
+                                    <option value="admin">Admin & Customer Support</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mt-4 mt-md-0">
+                                <label for="jobType" class="form-label">Project Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jobType" required>
+                                    <option value="fixed">Fixed Price</option>
+                                    <option value="hourly">Hourly Rate</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="jobDescription" class="form-label">Job Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="jobDescription" rows="6" placeholder="Describe the project, scope of work, and your expectations..." required></textarea>
+                            <div class="form-text mt-2 text-secondary">Be as detailed as possible to get the best proposals.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="requiredSkills" class="form-label">Required Skills</label>
+                            <input type="text" class="form-control" id="requiredSkills" placeholder="e.g. Figma, HTML, CSS (Separate with commas)">
+                        </div>
+
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <label for="budget" class="form-label">Budget / Rate <span class="text-danger">*</span></label>
+                                <div class="budget-input-wrapper">
+                                    <span class="currency-symbol">₦</span>
+                                    <input type="number" class="form-control" id="budget" placeholder="0.00" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-4 mt-md-0">
+                                <label for="deadline" class="form-label">Application Deadline</label>
+                                <input type="date" class="form-control" id="deadline">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <button type="button" class="btn-outline-custom" onclick="window.history.back()">Cancel</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn-dark-custom">Post Job</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </div>
+
+            <div class="footer-links">
+                <a href="#" class="footer-link">How It Works</a>
+                <a href="#" class="footer-link">Browse Jobs</a>
+                <a href="#" class="footer-link">Resources</a>
+            </div>
+
+            <div class="footer-social">
+                <a href="#" class="social-icon">
+                    <i class="bi bi-twitter-x"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="bi bi-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
