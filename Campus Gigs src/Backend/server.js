@@ -1,62 +1,182 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const passport = require('passport');
-require('./config/passport');
+// =============================================================================
+// server.js
+// -----------------------------------------------------------------------------
+// Main Express application entry point for Campus Gigs backend.
+//
+// Responsibilities:
+//   1. Connect to MongoDB via Mongoose
+//   2. Configure global middleware (CORS, JSON parsing, rate limiting)
+//   3. Mount all API route modules under /api/...
+//   4. Start the HTTP server
+//
+// Run with: node server.js  OR  nodemon server.js (for development auto-reload)
+// =============================================================================
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config(); // Load .env variables into process.env
 
 const app = express();
 
-//
-// Defines exactly who is allowed to talk to your API (whitelist)
-const allowedOrigins = [
-    'http://127.0.0.1:5500',           // Standard Live Server IP
-    'http://localhost:5500',           // Standard Live Server Localhost
-    'http://127.0.0.1:5501',           // Fallback Live Server IP
-    'http://localhost:5501',           // Fallback Live Server Localhost
-    'https://campusgigs-nile.com',     // Future Production Domain
-    'https://www.campusgigs-nile.com'  // Future Production Domain (www)
-];
+// =============================================================================
+// MIDDLEWARE — Applied globally to every incoming request
+// =============================================================================
 
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        // OR allow if the origin is in our whitelist
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS restrictions'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Restrict allowed HTTP methods
-    credentials: true // Crucial if you ever switch from localStorage JWTs to HttpOnly Cookies
+// -------------------------------------------------------------------------
+// CORS — Allow the decoupled frontend (served from a different origin) to
+// make fetch() requests to this API.
+//
+// In development, the frontend is typically opened directly from the file
+// system (file://) or via VS Code Live Server (http://127.0.0.1:5500).
+// In production, replace the origin array with your actual frontend domain.
+//
+// credentials: true is required if you ever move to cookie-based auth.
+// -------------------------------------------------------------------------
+app.use(
+  cors({
+    origin: [
+      "http://127.0.0.1:5500",   // VS Code Live Server default
+      "http://localhost:5500",    // alternate Live Server address
+      "http://localhost:3000",    // Create React App / Vite dev server (if ever used)
+      "http://127.0.0.1:3000",
+    ],
+    credentials: true,
+  })
+);
+
+// Parse incoming request bodies as JSON.
+// The limit is raised from the default 100kb to 1mb to accommodate base64
+// encoded data or large cover letters. Adjust as needed.
+app.use(express.json({ limit: "1mb" }));
+
+// Parse URL-encoded form bodies (for any traditional HTML form submissions)
+app.use(express.urlencoded({ extended: true }));
+
+// -------------------------------------------------------------------------
+// Request logger — logs every incoming request to the console in development.
+// Remove or replace with a proper logger (e.g. morgan, winston) in production.
+// -------------------------------------------------------------------------
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, _res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// =============================================================================
+// DATABASE CONNECTION
+// -----------------------------------------------------------------------------
+// We connect to MongoDB before starting the HTTP server. If the connection
+// fails, we log the error and exit — there's no point serving routes when
+// the database is unavailable.
+//
+// The MONGODB_URI in .env should look like:
+//   mongodb://localhost:27017/campus_gigs           (local)
+//   mongodb+srv://user:pass@cluster.mongodb.net/db  (Atlas)
+// =============================================================================
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      // These options suppress Mongoose deprecation warnings in older versions.
+      // They are the defaults in Mongoose 6+ so you can remove them if on v6+.
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ MongoDB connected successfully.");
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    // Exit the process — a crashed server is better than a server silently
+    // failing to persist data. Your process manager (PM2, Docker) will restart it.
+    process.exit(1);
+  }
 };
 
-// 1. Middleware
-app.use(express.json({ limit: '10mb' })); 
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
-app.use(cors(corsOptions));
+// =============================================================================
+// ROUTE MODULES
+// -----------------------------------------------------------------------------
+// Each feature area has its own router file. Mounting them here under /api/
+// keeps all routes consistent and easy to proxy behind an Nginx/load balancer.
+// =============================================================================
 
-app.use(express.static('SIgn up.html'));
+// Previously completed routes (already in your project)
+const authRoutes    = require("./routes/auth");
+const userRoutes    = require("./routes/users");
 
-app.use(passport.initialize());
+// New routes built in this phase
+const jobRoutes         = require("./routes/jobs");
+const walletRoutes      = require("./routes/wallet");
+const contractRoutes    = require("./routes/contracts");
+const messageRoutes     = require("./routes/messages");
+const notificationRoutes = require("./routes/notifications");
 
-// 2. Import Routes
-const authRoutes = require('./routes/auth');
-const gigsRouter = require('./routes/gigs');
-app.use('/api/users', require('./routes/user'));
-app.use('/api/jobs', require('./routes/jobs'));
+// Mount routes
+app.use("/api/auth",          authRoutes);
+app.use("/api/users",         userRoutes);
+app.use("/api/jobs",          jobRoutes);
+app.use("/api/wallet",        walletRoutes);
+app.use("/api/contracts",     contractRoutes);
+app.use("/api/messages",      messageRoutes);
+app.use("/api/notifications", notificationRoutes);
 
-// 3. Use Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/gigs', gigsRouter);
+// =============================================================================
+// HEALTH CHECK endpoint
+// -----------------------------------------------------------------------------
+// A simple GET /api/health route that returns 200 OK with basic status info.
+// Useful for:
+//   - Uptime monitoring services (UptimeRobot, Better Uptime)
+//   - Docker HEALTHCHECK directives
+//   - Load balancer health probes
+// =============================================================================
+app.get("/api/health", (_req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    dbState: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+  });
+});
 
-// 4. Database Connection & Server Start
+// =============================================================================
+// 404 HANDLER — Catches any request that didn't match a route above
+// -----------------------------------------------------------------------------
+// This must come AFTER all route definitions.
+// Returns JSON (not HTML) since all clients expect JSON from this API.
+// =============================================================================
+app.use((_req, res) => {
+  res.status(404).json({ message: "Route not found." });
+});
+
+// =============================================================================
+// GLOBAL ERROR HANDLER
+// -----------------------------------------------------------------------------
+// Express calls this middleware when any route calls next(err) or throws
+// an unhandled synchronous error.
+//
+// Note: For async route handlers, unhandled promise rejections do NOT
+// automatically flow here in Express 4. You must either:
+//   a) Wrap every async handler in try/catch (what we do in this project), OR
+//   b) npm install express-async-errors and require it at the top of server.js
+//      (this monkey-patches Express to catch async errors automatically).
+// =============================================================================
+app.use((err, _req, res, _next) => {
+  console.error("Unhandled error:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "An unexpected server error occurred.",
+  });
+});
+
+// =============================================================================
+// SERVER START
+// =============================================================================
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("✅ MongoDB Connected");
-        app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-    })
-    .catch(err => console.log("❌ MongoDB Error:", err));
+// Connect to DB first, then start listening for HTTP requests.
+// This ordering guarantees the DB is ready before any request can arrive.
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Campus Gigs API running on http://localhost:${PORT}`);
+    console.log(`   Environment: ${process.env.NODE_ENV || "development"}`);
+  });
+});
+
+module.exports = app; // Export for testing (e.g. with Jest + Supertest)
