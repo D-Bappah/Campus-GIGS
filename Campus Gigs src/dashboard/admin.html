@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - Campus Gigs</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        /* Header Styles */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+        
+        .admin-badge {
+            background-color: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #1f2937 !important;
+            margin: 0 12px;
+            font-size: 15px;
+        }
+
+        .nav-link.active {
+            color: #3b82f6 !important;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6 !important;
+        }
+
+        .header-icons .btn-icon {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 20px;
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        .header-icons .btn-icon:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+        }
+
+        .profile-dropdown {
+            margin-left: 16px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 24px;
+        }
+
+        /* Admin Dashboard Styles */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .date-text {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stats-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            height: 100%;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-label {
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .stats-label i {
+            margin-right: 8px;
+            font-size: 18px;
+            color: #3b82f6;
+        }
+
+        .stats-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .stats-trend {
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+
+        .table-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom-width: 1px;
+            padding: 12px 16px;
+        }
+
+        .table td {
+            font-size: 14px;
+            color: #374151;
+            padding: 16px;
+            vertical-align: middle;
+            border-bottom-color: #f3f4f6;
+        }
+
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending { background-color: #fef3c7; color: #d97706; }
+        .status-active { background-color: #d1fae5; color: #059669; }
+        .status-resolved { background-color: #e0e7ff; color: #4f46e5; }
+
+        .action-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: #dbeafe;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-logo img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            margin-bottom: 16px;
+        }
+        
+        .footer p {
+            color: #4b5563;
+            font-size: 14px;
+            margin: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Access Control Script -->
+    <script>
+        // Strict restriction: Only admins can access this page
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('userRole');
+            // If the role is not strictly 'admin', redirect.
+            // For testing: Set localStorage.setItem('userRole', 'admin') in dev tools to view.
+            if (role !== 'admin') {
+                // TEMPORARILY DISABLED FOR TESTING
+                // alert("Access Denied: Administrator privileges required.");
+                // window.location.href = '../Login and authentification/admin-login.html'; 
+                console.log("Admin check disabled for testing. Role is: " + role);
+            }
+        });
+    </script>
+
+    <!-- Header (Admin Variant) -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="admin.html">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+                <span class="admin-badge">ADMIN</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Admin specific navigation -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Users</a>
+                    </li>
+                </ul>
+
+                <div class="header-icons d-flex align-items-center">
+                    <a href="#" class="btn-icon text-decoration-none">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                    <div class="profile-dropdown dropdown">
+                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar" id="headerAvatar">
+                                <i class="bi bi-shield-lock-fill text-primary"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="#">Admin Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../Login and authentification/admin-login.html" onclick="localStorage.removeItem('userRole')">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container pb-5">
+        
+        <div class="page-header">
+            <div class="date-text" id="adminDate">System Overview</div>
+            <h1 class="page-title">Admin Dashboard</h1>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-label"><i class="bi bi-people"></i> Total Users</div>
+                    <div class="stats-value">1,248</div>
+                    <div class="stats-trend trend-up"><i class="bi bi-arrow-up-short"></i> 12% this month</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-label"><i class="bi bi-briefcase"></i> Active Jobs</div>
+                    <div class="stats-value">342</div>
+                    <div class="stats-trend trend-up"><i class="bi bi-arrow-up-short"></i> 5% this week</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-label"><i class="bi bi-cash-stack"></i> Total Revenue</div>
+                    <div class="stats-value">₦450k</div>
+                    <div class="stats-trend trend-up"><i class="bi bi-arrow-up-short"></i> 8% this month</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-label"><i class="bi bi-exclamation-circle"></i> Pending Payouts</div>
+                    <div class="stats-value">24</div>
+                    <div class="stats-trend trend-down">Action Required</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Row -->
+        <div class="row g-4">
+            
+            <!-- Recent Jobs Table -->
+            <div class="col-lg-7">
+                <div class="table-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Job Postings</h2>
+                        <a href="#" class="btn btn-sm btn-light">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Client</th>
+                                    <th>Budget</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>UI/UX Designer Needed</strong><br><small class="text-muted">Design & Creative</small></td>
+                                    <td>TechCorp</td>
+                                    <td>₦50,000</td>
+                                    <td><span class="badge-status status-pending">Pending Review</span></td>
+                                    <td><a href="#" class="action-link">Review</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>React Developer for E-commerce</strong><br><small class="text-muted">Development</small></td>
+                                    <td>Sarah J.</td>
+                                    <td>₦120,000</td>
+                                    <td><span class="badge-status status-active">Active</span></td>
+                                    <td><a href="#" class="action-link">Manage</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Content Writer - Blog Posts</strong><br><small class="text-muted">Writing</small></td>
+                                    <td>MediaHouse</td>
+                                    <td>₦15,000</td>
+                                    <td><span class="badge-status status-active">Active</span></td>
+                                    <td><a href="#" class="action-link">Manage</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Users Table -->
+            <div class="col-lg-5">
+                <div class="table-card">
+                    <div class="section-header">
+                        <h2 class="section-title">New User Signups</h2>
+                        <a href="#" class="btn btn-sm btn-light">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-3" style="width: 32px; height: 32px; font-size: 16px;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <strong>David O.</strong><br>
+                                                <small class="text-muted">david@example.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Freelancer</td>
+                                    <td>Today</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-3" style="width: 32px; height: 32px; font-size: 16px;">
+                                                <i class="bi bi-building"></i>
+                                            </div>
+                                            <div>
+                                                <strong>Alpha Studios</strong><br>
+                                                <small class="text-muted">hello@alpha.co</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Client</td>
+                                    <td>Yesterday</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-3" style="width: 32px; height: 32px; font-size: 16px;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <strong>Miriam S.</strong><br>
+                                                <small class="text-muted">miriams@test.ng</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Freelancer</td>
+                                    <td>2 days ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
+            </div>
+            <p>&copy; 2025 Campus Gigs Admin Portal. Secure Access Only.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Set today's date dynamically
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('adminDate').textContent = new Date().toLocaleDateString('en-US', options);
+    </script>
+
+</body>
+</html>
