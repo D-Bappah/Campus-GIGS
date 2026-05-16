@@ -79,7 +79,7 @@ const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       // These options suppress Mongoose deprecation warnings in older versions.
-      // They are the defaults in Mongoose 6+ so you can remove them if on v6+.
+      // They are the defaults in Mongoose 6+
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -87,7 +87,7 @@ const connectDB = async () => {
   } catch (err) {
     console.error("❌ MongoDB connection failed:", err.message);
     // Exit the process — a crashed server is better than a server silently
-    // failing to persist data. Your process manager (PM2, Docker) will restart it.
+    // failing to persist data. The process manager (PM2, Docker) will restart it.
     process.exit(1);
   }
 };
@@ -99,11 +99,10 @@ const connectDB = async () => {
 // keeps all routes consistent and easy to proxy behind an Nginx/load balancer.
 // =============================================================================
 
-// Previously completed routes (already in your project)
+
 const authRoutes    = require("./routes/auth");
 const userRoutes    = require("./routes/users");
 
-// New routes built in this phase
 const jobRoutes         = require("./routes/jobs");
 const walletRoutes      = require("./routes/wallet");
 const contractRoutes    = require("./routes/contracts");
