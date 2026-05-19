@@ -251,10 +251,9 @@
             // If the role is not strictly 'admin', redirect.
             // For testing: Set localStorage.setItem('userRole', 'admin') in dev tools to view.
             if (role !== 'admin') {
-                // TEMPORARILY DISABLED FOR TESTING
-                // alert("Access Denied: Administrator privileges required.");
-                // window.location.href = '../Login and authentification/admin-login.html'; 
-                console.log("Admin check disabled for testing. Role is: " + role);
+                alert("Access Denied: Administrator privileges required.");
+                window.location.href = '../Login and authentification/admin-login.html';
+
             }
         });
     </script>

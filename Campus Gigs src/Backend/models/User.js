@@ -5,9 +5,18 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     studentId: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+
+    // Role is derived from email at login time (and persisted for consistency)
+    // - admin: exactly abdurrahmanabubakar234@gmail.com
+    // - freelancer: @nileuniverity.edu.ng
+    // - client: any other domain
+    role: { type: String, enum: ['admin', 'freelancer', 'client'], default: 'client' },
+
     otp: { type: String },
     otpExpires: { type: Date },
     isVerified: { type: Boolean, default: false },
+
+
 
     // Personal Info
     firstName: String,

@@ -49,8 +49,29 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        
+
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+        // ---------------------------------------------------------------------
+        // ROLE RULES (driven purely by the email address)
+        // - Admin: only abdurrahmanabubakar234@gmail.com
+        // - Freelancer: @nileuniverity.edu.ng
+        // - Client: any other domain
+        // ---------------------------------------------------------------------
+        const normalizeEmail = (emailStr) => (emailStr || '').trim().toLowerCase();
+        const normalized = normalizeEmail(email);
+        const computedRole = (() => {
+            if (normalized === 'abdurrahmanabubakar234@gmail.com') return 'admin';
+            if (normalized.endsWith('@nileuniverity.edu.ng')) return 'freelancer';
+            if (normalized.endsWith('@gmail.com')) return 'client';
+        })();
+
+        // Persist role so it stays consistent across sessions.
+        if (user.role !== computedRole) {
+            user.role = computedRole;
+            await user.save();
+        }
+
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
@@ -61,13 +82,14 @@ router.post('/login', async (req, res) => {
             { expiresIn: '2h' }
         );
 
-        res.json({ 
-            token, 
+res.json({ 
+            token,
             user: { 
-                id: user._id, 
+                id: user._id,
                 email: user.email,
-                onboardingComplete: user.onboardingComplete || false 
-            } 
+                onboardingComplete: user.onboardingComplete || false,
+                role: user.role || computedRole 
+            }
         });
     } catch (err) {
         console.error("Login Error:", err);

@@ -65,9 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Save the token AND the role
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userRole', data.user.role);
-                
-                // Send them directly to the Dashboard
-                window.location.href = '../Dashboard/dashboard.html'; 
+
+                // Redirect based on role
+                // - admin -> admin.html
+                // - client/freelancer -> dashboard.html (which toggles UI using userRole)
+                const role = data.user.role;
+                if (role === 'admin') {
+                    window.location.href = '../dashboard/admin.html';
+                } else {
+                    window.location.href = '../dashboard/dashboard.html';
+                }
             } else {
                 // Show error if password/email is wrong
                 alert(data.message || "Invalid credentials.");
