@@ -1,31 +1,20 @@
-//CREATES:
-//   - 4 Users  (2 freelancers, 2 clients)
-//   - 6 Jobs   (various categories and statuses)
-//   - 4 Applications
-//   - 2 Contracts (1 active, 1 completed)
-//   - Transactions reflecting the contract payments
-//   - Sample notifications for each user
-//   - Sample messages between users
+
 // =============================================================================
 
 require("dotenv").config({ path: require("path").join(__dirname, "../.env") });
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 // Imports all models so Mongoose registers them before we use them
-const User         = require("../models/User");
-const Job          = require("../models/Job");
-const Application  = require("../models/Application");
-const Contract     = require("../models/Contract");
-const Transaction  = require("../models/Transaction");
+const User = require("../models/User");
+const Job = require("../models/Job");
+const Application = require("../models/Application");
+const Contract = require("../models/Contract");
+const Transaction = require("../models/Transaction");
 const Notification = require("../models/Notification");
-const Message      = require("../models/Message");
+const Message = require("../models/Message");
 
-// =============================================================================
-// SEED DATA DEFINITIONS
-// =============================================================================
-
-// All test accounts share this password for convenience
 const TEST_PASSWORD = "Password123!";
 
 const seedUsers = [
@@ -79,20 +68,12 @@ const seedUsers = [
   },
 ];
 
-// =============================================================================
-// MAIN SEED FUNCTION
-// =============================================================================
 async function seed() {
-  console.log("ð± Connecting to MongoDB...");
-
+  console.log("💱 Connecting to MongoDB...");
   await mongoose.connect(process.env.MONGO_URI);
-  console.log("â Connected.");
+  console.log("✅ Connected.");
 
-  // ---------------------------------------------------------------------------
-  // STEP 1: Clear all collections
-  // Using deleteMany({}) rather than dropCollection() to preserve indexes.
-  // ---------------------------------------------------------------------------
-  console.log("\nð  Clearing existing data...");
+  console.log("\n🛑 Clearing existing data...");
   await Promise.all([
     User.deleteMany({}),
     Job.deleteMany({}),
@@ -104,13 +85,7 @@ async function seed() {
   ]);
   console.log("   Done.");
 
-  // ---------------------------------------------------------------------------
-  // STEP 2: Create Users
-  // We hash the password manually here because we're using insertMany (which
-  // bypasses pre-save hooks). For seed data, this is acceptable just make
-  // sure to use the same salt rounds as the model (12).
-  // ---------------------------------------------------------------------------
-  console.log("\nð¥ Creating users...");
+  console.log("\n🧵 Creating users...");
   const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 12);
   const usersWithPasswords = seedUsers.map((u) => ({
     ...u,
@@ -120,17 +95,13 @@ async function seed() {
 
   const users = await User.insertMany(usersWithPasswords);
   const [chidi, amina, emeka, fatima] = users;
+
   console.log(`   Created ${users.length} users.`);
-  console.log(`   Login with any of: chidi@test.com, amina@test.com, emeka@test.com, fatima@test.com`);
   console.log(`   Password for all: ${TEST_PASSWORD}`);
 
-  // ---------------------------------------------------------------------------
-  // STEP 3: Create Jobs
-  // ---------------------------------------------------------------------------
-  console.log("\nð¼ Creating jobs...");
-
-  const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const twoWeeksFromNow = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+  console.log("\n📦 Creating jobs...");
+  const landingDeadline = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000);
+  const transcribeDeadline = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
 
   const jobs = await Job.insertMany([
     {
@@ -139,7 +110,7 @@ async function seed() {
         "I run a small events management company targeting university students. I need a professional logo, colour palette, and basic brand guidelines. The brand should feel modern, energetic, and youthful. Please share your portfolio in your proposal.",
       category: "Design & Creative",
       skills: ["Logo Design", "Branding", "Illustrator", "Figma"],
-      budget: 2500000, // â¦25,000 in kobo
+      budget: 2500000,
       deliveryDays: 7,
       postedBy: emeka._id,
       status: "open",
@@ -151,7 +122,7 @@ async function seed() {
         "We are launching a health and wellness blog targeting Nigerian university students. We need 10 well-researched, SEO-optimised articles of 800-1000 words each. Topics will be provided. Must be original and plagiarism-free.",
       category: "Writing & Content",
       skills: ["SEO Writing", "Blog Writing", "Research", "Health Content"],
-      budget: 3000000, // â¦30,000 in kobo
+      budget: 3000000,
       deliveryDays: 14,
       postedBy: fatima._id,
       status: "open",
@@ -159,10 +130,10 @@ async function seed() {
     {
       title: "Build a Landing Page for My Mobile App Startup",
       description:
-        "I need a responsive landing page for my fintech startup. The page should include a hero section, feature highlights, testimonials, and a waitlist signup form. Should be built with HTML, CSS, and JavaScript â no frameworks needed.",
+        "I need a responsive landing page for my fintech startup. The page should include a hero section, feature highlights, testimonials, and a waitlist signup form. Should be built with HTML, CSS, and JavaScript — no frameworks needed.",
       category: "Programming & Tech",
       skills: ["HTML/CSS", "JavaScript", "Responsive Design", "UI/UX"],
-      budget: 5000000, // â¦50,000 in kobo
+      budget: 5000000,
       deliveryDays: 10,
       postedBy: fatima._id,
       status: "in_progress",
@@ -174,7 +145,7 @@ async function seed() {
         "Looking for a social media manager to handle our campus event brand's Instagram and Twitter accounts for 30 days. Deliverables: 3 posts/week per platform, story updates, and a monthly analytics report.",
       category: "Marketing & Social Media",
       skills: ["Social Media", "Content Creation", "Canva", "Analytics"],
-      budget: 1500000, // â¦15,000 in kobo
+      budget: 1500000,
       deliveryDays: 30,
       postedBy: emeka._id,
       status: "open",
@@ -185,7 +156,7 @@ async function seed() {
         "I have 5 hours of recorded interviews for my final year research project. I need them accurately transcribed into Word documents and lightly edited for readability. Turnaround needed within 5 days.",
       category: "Admin & Virtual Assistant",
       skills: ["Transcription", "Typing", "Microsoft Word", "Research"],
-      budget: 800000, // â¦8,000 in kobo
+      budget: 800000,
       deliveryDays: 5,
       postedBy: fatima._id,
       status: "completed",
@@ -197,33 +168,26 @@ async function seed() {
         "We need a short, engaging promo video for our faculty student association. You will be provided with raw footage and photos. Deliverable: edited video with background music, text overlays, and transitions.",
       category: "Video & Animation",
       skills: ["Video Editing", "Premiere Pro", "After Effects", "Motion Graphics"],
-      budget: 4000000, // â¦40,000 in kobo
+      budget: 4000000,
       deliveryDays: 7,
       postedBy: emeka._id,
       status: "open",
     },
   ]);
 
-  const [logoJob, blogJob, landingPageJob, socialJob, transcribeJob, videoJob] = jobs;
-  console.log(`   Created ${jobs.length} jobs.`);
+  const [logoJob, blogJob, landingPageJob, , transcribeJob] = jobs;
 
-  // ---------------------------------------------------------------------------
-  // STEP 4: Create Applications
-  // ---------------------------------------------------------------------------
-  console.log("\nð Creating applications...");
-
+  console.log("\n🧾 Creating applications...");
   const applications = await Application.insertMany([
-    // Chidi bids on the logo job
     {
       job: logoJob._id,
       applicant: chidi._id,
       coverLetter:
         "Hi! I'm Chidi, a UI/UX designer and frontend developer based in Lagos. I have designed over 20 logos for student-run businesses across UNILAG. I understand how to create a brand that resonates with a young, energetic audience. I would love to bring your vision to life. Please check my portfolio at dribbble.com/chidi (example). I can deliver within 5 days.",
-      bidAmount: 2000000, // bidding below budget â competitive
+      bidAmount: 2000000,
       deliveryDays: 5,
       status: "pending",
     },
-    // Amina bids on the logo job too
     {
       job: logoJob._id,
       applicant: amina._id,
@@ -233,17 +197,15 @@ async function seed() {
       deliveryDays: 7,
       status: "pending",
     },
-    // Chidi was accepted for the landing page job
     {
       job: landingPageJob._id,
       applicant: chidi._id,
       coverLetter:
-        "I specialise in building fast, responsive landing pages. I have built 8 landing pages for Nigerian startups this year alone. My process: gather requirements â wireframe â build â revise. I can deliver a pixel-perfect result in 8 days.",
+        "I specialise in building fast, responsive landing pages. I have built 8 landing pages for Nigerian startups this year alone. My process: gather requirements → wireframe → build → revise. I can deliver a pixel-perfect result in 8 days.",
       bidAmount: 4500000,
       deliveryDays: 8,
       status: "accepted",
     },
-    // Amina completed the transcription job
     {
       job: transcribeJob._id,
       applicant: amina._id,
@@ -255,27 +217,16 @@ async function seed() {
     },
   ]);
 
-  const [logoApp1, logoApp2, landingApp, transcribeApp] = applications;
-  console.log(`   Created ${applications.length} applications.`);
+  const [ , , landingApp, transcribeApp] = applications;
 
-  // ---------------------------------------------------------------------------
-  // STEP 5: Create Contracts
-  // ---------------------------------------------------------------------------
-  console.log("\nð Creating contracts...");
-
-  const landingDeadline = new Date();
-  landingDeadline.setDate(landingDeadline.getDate() + 8);
-
-  const transcribeDeadline = new Date();
-  transcribeDeadline.setDate(transcribeDeadline.getDate() - 3); // already past
-
+  console.log("\n📝 Creating contracts...");
   const contracts = await Contract.insertMany([
     {
       job: landingPageJob._id,
       application: landingApp._id,
       client: fatima._id,
       freelancer: chidi._id,
-      agreedAmount: 4500000, // â¦45,000
+      agreedAmount: 4500000,
       deadline: landingDeadline,
       status: "active",
       clientSignedAt: new Date(),
@@ -286,36 +237,29 @@ async function seed() {
       application: transcribeApp._id,
       client: fatima._id,
       freelancer: amina._id,
-      agreedAmount: 750000, // â¦7,500
+      agreedAmount: 750000,
       deadline: transcribeDeadline,
       status: "completed",
       deliverableNote:
-        "All 5 interviews have been transcribed and saved as separate Word documents. I have also done light editing to remove filler words and improve readability. Files are in the shared Google Drive folder: https://drive.google.com/... (example link). Please let me know if any revisions are needed.",
+        "All 5 interviews have been transcribed and saved as separate Word documents. Light editing applied for readability.",
       clientSignedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       freelancerSignedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     },
   ]);
 
   const [landingContract, transcribeContract] = contracts;
-  console.log(`   Created ${contracts.length} contracts.`);
 
-  // ---------------------------------------------------------------------------
-  // STEP 6: Create Transactions
-  // ---------------------------------------------------------------------------
-  console.log("\nð³ Creating transactions...");
-
+  console.log("\n💳 Creating transactions...");
   await Transaction.insertMany([
-    // Fatima's escrow payment for the landing page contract
     {
       user: fatima._id,
       type: "escrow_in",
       amount: 4500000,
       currency: "NGN",
-      description: "Escrow for contract: Landing Page â Fatima's Startup",
+      description: "Escrow for contract: Landing Page — Fatima's Startup",
       status: "completed",
       relatedContract: landingContract._id,
     },
-    // Amina's escrow was released when transcription job completed
     {
       user: fatima._id,
       type: "escrow_in",
@@ -330,11 +274,10 @@ async function seed() {
       type: "escrow_out",
       amount: 750000,
       currency: "NGN",
-      description: "Escrow released â Transcription contract completed",
+      description: "Escrow released — Transcription contract completed",
       status: "completed",
       relatedContract: transcribeContract._id,
     },
-    // Amina received payment for the transcription job
     {
       user: amina._id,
       type: "escrow_out",
@@ -344,11 +287,10 @@ async function seed() {
       status: "completed",
       relatedContract: transcribeContract._id,
     },
-    // Amina withdrew some of her earnings
     {
       user: amina._id,
       type: "debit",
-      amount: 500000, // â¦5,000 withdrawal
+      amount: 500000,
       currency: "NGN",
       description: "Withdrawal to GTBank ****4521",
       status: "completed",
@@ -358,13 +300,12 @@ async function seed() {
         accountName: "Amina Bello",
       },
     },
-    // Chidi has some prior earnings from past jobs
     {
       user: chidi._id,
       type: "credit",
       amount: 1500000,
       currency: "NGN",
-      description: "Payment for: Logo Design â Naijatech Events",
+      description: "Payment for: Logo Design — Naijatech Events",
       status: "completed",
     },
     {
@@ -376,13 +317,8 @@ async function seed() {
       status: "completed",
     },
   ]);
-  console.log("   Created sample transactions.");
 
-  // ---------------------------------------------------------------------------
-  // STEP 7: Create Notifications
-  // ---------------------------------------------------------------------------
-  console.log("\nð Creating notifications...");
-
+  console.log("\n🔔 Creating notifications...");
   await Notification.insertMany([
     {
       recipient: emeka._id,
@@ -415,7 +351,7 @@ async function seed() {
     {
       recipient: fatima._id,
       type: "application_accepted",
-      message: 'You accepted Chidi\'s proposal for "Build a Landing Page". Contract is now live.',
+      message: "You accepted Chidi's proposal for \"Build a Landing Page\". Contract is now live.",
       link: `contract-details.html?id=${landingContract._id}`,
       read: false,
     },
@@ -427,22 +363,16 @@ async function seed() {
       read: false,
     },
   ]);
-  console.log("   Created sample notifications.");
 
-  // ---------------------------------------------------------------------------
-  // STEP 8: Create Messages
-  // ---------------------------------------------------------------------------
-  console.log("\nð¬ Creating sample messages...");
-
-  // Conversation between Fatima (client) and Chidi (freelancer) about the landing page
+  console.log("\n💬 Creating messages...");
   const convId = [fatima._id.toString(), chidi._id.toString()].sort().join("_");
 
   const messageTimestamps = [
-    new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
     new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000),
     new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
     new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 + 10 * 60 * 1000),
-    new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
+    new Date(Date.now() - 30 * 60 * 1000),
   ];
 
   await Message.insertMany([
@@ -466,7 +396,7 @@ async function seed() {
       conversationId: convId,
       sender: fatima._id,
       receiver: chidi._id,
-      text: "Sure! Our brand colours are deep purple (#6B2FBE) and gold (#F5A623). I'll email you the logo file. Reference sites: Flutterwave and Paystack landing pages â I love how clean they are.",
+      text: "Sure! Our brand colours are deep purple (#6B2FBE) and gold (#F5A623). Reference sites: Flutterwave and Paystack landing pages — I love how clean they are.",
       read: true,
       createdAt: messageTimestamps[2],
     },
@@ -483,38 +413,19 @@ async function seed() {
       sender: chidi._id,
       receiver: fatima._id,
       text: "Hey Fatima, here's the wireframe: https://www.figma.com/file/example (dummy link). Let me know what you think before I move to code!",
-      read: false, // Fatima hasn't read this yet
+      read: false,
       createdAt: messageTimestamps[4],
     },
   ]);
-  console.log("   Created sample conversation (Fatima â Chidi).");
 
-  // ---------------------------------------------------------------------------
-  // SUMMARY
-  // ---------------------------------------------------------------------------
-  console.log("\nâ Seed complete! Here's your test data:");
-  console.log("â".repeat(60));
-  console.log("USERS (password for all: Password123!)");
-  console.log(`  Freelancer: chidi@test.com  (ID: ${chidi._id})`);
-  console.log(`  Freelancer: amina@test.com  (ID: ${amina._id})`);
-  console.log(`  Client:     emeka@test.com  (ID: ${emeka._id})`);
-  console.log(`  Client:     fatima@test.com (ID: ${fatima._id})`);
-  console.log("\nJOBS");
-  console.log(`  Open:       "${logoJob.title}" (ID: ${logoJob._id})`);
-  console.log(`  Open:       "${blogJob.title.substring(0, 40)}..." (ID: ${blogJob._id})`);
-  console.log(`  In Progress:"${landingPageJob.title.substring(0, 40)}..." (ID: ${landingPageJob._id})`);
-  console.log(`  Completed:  "${transcribeJob.title.substring(0, 40)}..." (ID: ${transcribeJob._id})`);
-  console.log("\nCONTRACTS");
-  console.log(`  Active:    Landing Page (ID: ${landingContract._id})`);
-  console.log(`  Completed: Transcription (ID: ${transcribeContract._id})`);
-  console.log("â".repeat(60));
-
+  console.log("\n✅ Seed complete.");
   await mongoose.connection.close();
-  console.log("\nð Connection closed. Happy building!\n");
+  console.log("Connection closed.");
 }
 
 seed().catch((err) => {
-  console.error("â Seed failed:", err);
+  console.error("Seed failed:", err);
   mongoose.connection.close();
   process.exit(1);
 });
+

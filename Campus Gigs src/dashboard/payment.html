@@ -1,760 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Payment - Campus Gigs</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/notifications.css">
-
-    <style>
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #ffffff;
-            color: #111827;
-        }
-
-        /* Header Styles */
-        .navbar {
-            background-color: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 16px 0;
-            margin-bottom: 32px;
-        }
-
-        .navbar-brand img {
-            height: 40px;
-            width: 40px;
-            object-fit: contain;
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: #1f2937 !important;
-            margin: 0 12px;
-            font-size: 15px;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: #3b82f6 !important;
-        }
-
-        .header-icons .btn-icon {
-            background: none;
-            border: none;
-            color: #6b7280;
-            font-size: 20px;
-            padding: 8px;
-            margin-left: 8px;
-        }
-
-        .profile-dropdown {
-            margin-left: 16px;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background-color: #e5e7eb;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-            font-size: 24px;
-        }
-
-        /* Payment Content */
-        .greeting-section {
-            margin-bottom: 24px;
-        }
-
-        .date-text {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .greeting-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .wallet-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 24px;
-            background: #fff;
-            margin-bottom: 32px;
-        }
-
-        .wallet-header {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #111827;
-        }
-
-        .earning-label {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .amount-large {
-            font-size: 36px;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .sub-wallet-box {
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .sub-amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .btn-withdraw {
-            background-color: #111827;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-top: 12px;
-            width: 100%;
-        }
-
-        .btn-withdraw:hover {
-            background-color: #1f2937;
-        }
-
-        /* Recent Activity */
-        .activity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .activity-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .activity-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            transition: all 0.2s;
-            cursor: pointer;
-            background: #fff;
-        }
-
-        .activity-item:hover {
-            border-color: #d1d5db;
-        }
-
-        .activity-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .activity-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .activity-icon {
-            width: 48px;
-            height: 48px;
-            background-color: #00c853;
-            /* Custom green from screenshot */
-            color: white;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .activity-details h4 {
-            font-size: 15px;
-            font-weight: 600;
-            margin: 0 0 4px 0;
-            color: #111827;
-        }
-
-        .activity-details p {
-            font-size: 13px;
-            color: #6b7280;
-            margin: 0;
-        }
-
-        .activity-meta {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-        }
-
-        .activity-date {
-            font-size: 13px;
-            color: #4b5563;
-        }
-
-        .badge-status {
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 500;
-            display: inline-block;
-        }
-
-        .bg-received {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-
-        .bg-pending {
-            background-color: #ffedd5;
-            color: #9a3412;
-        }
-
-        .bg-released {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-
-        /* Expanded Details */
-        .activity-expanded {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .progress-flow {
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .flow-line {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #e5e7eb;
-            z-index: 1;
-            transform: translateY(-50%);
-        }
-
-        .flow-line-active {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 50%;
-            /* Adjust based on progress */
-            height: 2px;
-            background-color: #3b82f6;
-            z-index: 2;
-            transform: translateY(-50%);
-        }
-
-        .flow-step {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid #e5e7eb;
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .flow-step.active {
-            border-color: #3b82f6;
-            color: #3b82f6;
-        }
-
-        .flow-step.completed {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-            color: #3b82f6;
-        }
-
-        .flow-label-container {
-            display: flex;
-            justify-content: space-between;
-            max-width: 650px;
-            margin: 8px auto 0;
-            font-size: 12px;
-            color: #4b5563;
-        }
-
-        .flow-label-left {
-            text-align: left;
-        }
-
-        .flow-label-right {
-            text-align: right;
-            color: #3b82f6;
-        }
-
-        .txn-ref {
-            margin-top: 16px;
-            font-size: 12px;
-            color: #6b7280;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Success Modal */
-        .modal-success-icon {
-            width: 120px;
-            margin: 0 auto 24px;
-        }
-
-        /* Reuse footer styles */
-        .footer {
-            background: #dbeafe;
-            padding: 60px 0 40px;
-            text-align: center;
-            margin-top: 60px;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-
-        .footer-logo img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin-bottom: 32px;
-        }
-
-        .footer-link {
-            color: #374151;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .footer-social {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #374151;
-            text-decoration: none;
-            font-size: 20px;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .d-none {
-            display: none !important;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wallet & Payments — Campus Gigs</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+  />
 </head>
+<body class="bg-light">
 
-<body>
+  <!-- ======================================================================
+       NAVBAR (shared across all pages)
+       The notification bell badge is updated by notifications.js automatically.
+  ====================================================================== -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">🎓 Campus Gigs</a>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <a href="browse-jobs.html" class="nav-link text-white">Browse Jobs</a>
+        <a href="work.html" class="nav-link text-white">My Work</a>
+        <a href="message.html" class="nav-link text-white position-relative">
+          <i class="bi bi-chat-dots fs-5"></i>
+          <span id="unread-badge" class="badge bg-danger position-absolute top-0 start-100 translate-middle d-none">0</span>
+        </a>
+        <a href="notifications.html" class="nav-link text-white position-relative">
+          <i class="bi bi-bell fs-5" id="notification-bell"></i>
+          <span id="notification-badge" class="badge bg-danger position-absolute top-0 start-100 translate-middle d-none">0</span>
+        </a>
+        <a href="payment.html" class="nav-link text-white active">
+          <i class="bi bi-wallet2 fs-5"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="dashboard.html">
-                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+  <!-- ======================================================================
+       PAGE CONTENT
+  ====================================================================== -->
+  <div class="container py-4">
+
+    <!-- Page heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="mb-0 fw-bold">Wallet & Payments</h4>
+      <button
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#withdrawModal"
+      >
+        <i class="bi bi-send me-1"></i> Withdraw Funds
+      </button>
+    </div>
+
+    <!-- Alert containers — shown/hidden by payment.js -->
+    <div id="wallet-error-msg"   class="alert d-none" role="alert"></div>
+    <div id="wallet-success-msg" class="alert d-none" role="alert"></div>
+
+    <!-- ── BALANCE CARDS ────────────────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted small mb-1">
+              <i class="bi bi-wallet2 me-1 text-primary"></i> Available Balance
+            </p>
+            <!-- payment.js writes the formatted value into this span -->
+            <h3 class="fw-bold text-primary" id="wallet-available-balance">
+              <span class="placeholder col-6"></span>
+            </h3>
+            <small class="text-muted">Ready to withdraw</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted small mb-1">
+              <i class="bi bi-lock me-1 text-warning"></i> In Escrow
+            </p>
+            <h3 class="fw-bold text-warning" id="wallet-escrow-balance">
+              <span class="placeholder col-6"></span>
+            </h3>
+            <small class="text-muted">Held for active contracts</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted small mb-1">
+              <i class="bi bi-trophy me-1 text-success"></i> Total Earned
+            </p>
+            <h3 class="fw-bold text-success" id="wallet-total-earned">
+              <span class="placeholder col-6"></span>
+            </h3>
+            <small class="text-muted">Lifetime earnings</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TRANSACTION HISTORY ───────────────────────────────────────────── -->
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold">Transaction History</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <!-- payment.js injects <tr> rows into this tbody -->
+            <tbody id="transaction-list">
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Pagination controls — payment.js enables/disables these buttons -->
+      <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+        <button id="pagination-prev" class="btn btn-sm btn-outline-secondary" disabled>
+          <i class="bi bi-chevron-left"></i> Previous
+        </button>
+        <span id="pagination-info" class="text-muted small">Page 1 of 1</span>
+        <button id="pagination-next" class="btn btn-sm btn-outline-secondary" disabled>
+          Next <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       WITHDRAWAL MODAL
+       The form submission is handled by payment.js → handleWithdrawSubmit()
+  ====================================================================== -->
+  <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="withdrawModalLabel">
+            <i class="bi bi-bank me-2"></i>Withdraw Funds
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="wallet-error-msg" class="alert d-none" role="alert"></div>
+
+          <!-- id="withdraw-form" is the hook payment.js binds its submit listener to -->
+          <form id="withdraw-form" novalidate>
+            <div class="mb-3">
+              <label for="withdraw-amount" class="form-label">Amount (₦)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="withdraw-amount"
+                placeholder="e.g. 5000"
+                min="500"
+                step="100"
+                required
+              />
+              <div class="form-text">Minimum withdrawal: ₦500</div>
+            </div>
+            <div class="mb-3">
+              <label for="withdraw-bank-name" class="form-label">Bank Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="withdraw-bank-name"
+                placeholder="e.g. GTBank"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="withdraw-account-number" class="form-label">Account Number</label>
+              <input
+                type="text"
+                class="form-control"
+                id="withdraw-account-number"
+                placeholder="10-digit account number"
+                maxlength="10"
+                pattern="\d{10}"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="withdraw-account-name" class="form-label">Account Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="withdraw-account-name"
+                placeholder="Name on the bank account"
+                required
+              />
+            </div>
+
+            <!-- [EXTERNAL ACTION REQUIRED]: Paystack gateway integration needed -->
+            <div class="alert alert-warning small">
+              <i class="bi bi-info-circle me-1"></i>
+              Withdrawals are processed within 1–3 business days after Paystack integration is complete.
+            </div>
+
+            <button type="submit" id="withdraw-submit-btn" class="btn btn-primary w-100">
+              Submit Withdrawal
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="browse-jobs.html?mode=registered">Browse Jobs</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="work.html">Work</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="payment.html">Payment</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="message.html">Message</a>
-                    </li>
-                </ul>
-
-                <div class="header-icons d-flex align-items-center">
-                    <a href="settings.html" class="btn-icon text-decoration-none">
-                        <i class="bi bi-gear"></i>
-                    </a>
-                    <div class="notification-wrapper">
-                        <button class="btn-icon" id="notificationBtn">
-                            <i class="bi bi-bell"></i>
-                        </button>
-                        <!-- Notification Popup -->
-                        <div class="notification-popup" id="notificationPopup">
-                            <div class="notification-header">
-                                <h4 class="notif-title">Notifications</h4>
-                                <a href="#" class="mark-read-link">Mark all as read</a>
-                            </div>
-                            <div class="notification-list">
-                                <!-- Item 1 -->
-                                <a href="#" class="notification-item unread">
-                                    <div class="notif-icon-box">
-                                        <i class="bi bi-briefcase"></i>
-                                    </div>
-                                    <div class="notif-content">
-                                        <p class="notif-text"><strong>New Job Alert:</strong> Product Designer needed
-                                            for Fintech project.</p>
-                                        <span class="notif-time">2 mins ago</span>
-                                    </div>
-                                </a>
-                                <!-- Item 2 -->
-                                <a href="#" class="notification-item unread">
-                                    <div class="notif-avatar">
-                                        <!-- Placeholder for user avatar -->
-                                        <img src="assets/avatar-samu.jpg"
-                                            onerror="this.src='https://via.placeholder.com/40'" alt="User"
-                                            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
-                                    </div>
-                                    <div class="notif-content">
-                                        <p class="notif-text"><strong>Samu</strong> sent you a message regarding "House
-                                            for rent".</p>
-                                        <span class="notif-time">1 hour ago</span>
-                                    </div>
-                                </a>
-                                <!-- Item 3 -->
-                                <a href="#" class="notification-item">
-                                    <div class="notif-icon-box" style="background-color: #ecfdf5; color: #059669;">
-                                        <i class="bi bi-check-lg"></i>
-                                    </div>
-                                    <div class="notif-content">
-                                        <p class="notif-text"><strong>Payment Received:</strong> N20,000 has been added
-                                            to your wallet.</p>
-                                        <span class="notif-time">Yesterday</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="notification-footer">
-                                <a href="#" class="view-all-link">View all notifications</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="profile-dropdown dropdown">
-                        <a href="#" class="text-decoration-none" id="profileDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-avatar">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="dashboard.html">Profile</a></li>
-                            <li><a class="dropdown-item" href="work.html">Saved Jobs</a></li>
-                            <li><a class="dropdown-item" href="help.html">Help</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+          </form>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container pb-5">
-
-        <!-- Greeting -->
-        <div class="greeting-section">
-            <div class="date-text">Monday, 29th December</div>
-            <h1 class="greeting-title">Good Evening! Emma,</h1>
-        </div>
-
-        <!-- Wallet Card -->
-        <div class="wallet-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="wallet-header mb-0">Wallet</div>
-                <button class="btn btn-primary" id="btn-withdraw-trigger" style="padding: 8px 24px;">Withdraw</button>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="earning-label">Total Earning</div>
-                    <div class="amount-large">N50,000</div>
-                </div>
-                <!-- Spacing cols if needed or grid gap -->
-                <div class="col-md-4 offset-md-4 d-flex gap-3">
-                    <div class="sub-wallet-box w-50">
-                        <div class="earning-label">Pending</div>
-                        <div class="sub-amount">N10,000</div>
-                    </div>
-                    <div class="sub-wallet-box w-50">
-                        <div class="earning-label">Withdrawable</div>
-                        <div class="sub-amount">N40,000</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="activity-header">
-            <div class="activity-title">Recent activity</div>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-light dropdown-toggle" type="button">Sort by</button>
-            </div>
-        </div>
-
-        <div class="activity-list">
-
-            <!-- Item 1 -->
-            <div class="activity-item">
-                <div class="activity-main">
-                    <div class="activity-info">
-                        <div class="activity-icon">
-                            <i class="bi bi-arrow-right"></i>
-                        </div>
-                        <div class="activity-details">
-                            <h4>UI Designer – Campus Event App</h4>
-                            <p>Samu</p>
-                        </div>
-                    </div>
-                    <div class="activity-meta">
-                        <span class="activity-date">Aug 30th</span>
-                        <span class="badge-status bg-received">Received</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item 2 (Expanded) -->
-            <div class="activity-item" id="activity-expanded-item">
-                <div class="activity-main">
-                    <div class="activity-info">
-                        <div class="activity-icon">
-                            <i class="bi bi-arrow-right"></i>
-                        </div>
-                        <div class="activity-details">
-                            <h4>UI Designer – Campus Event App</h4>
-                            <p>Samu</p>
-                        </div>
-                    </div>
-                    <div class="activity-meta">
-                        <span class="activity-date">Aug 30th</span>
-                        <span class="badge-status bg-pending">Pending</span>
-                    </div>
-                </div>
-
-                <!-- Expanded Details Container -->
-                <div class="activity-expanded">
-                    <div class="progress-flow">
-                        <div class="flow-line"></div>
-                        <div class="flow-line-active"></div>
-                        <div class="flow-step completed"><i class="bi bi-check"></i></div>
-                        <div class="flow-step active"><i class="bi bi-hourglass-split"></i></div>
-                        <!-- Loading spinner icon sim -->
-                    </div>
-                    <div class="flow-label-container">
-                        <div class="flow-label-left">Payment approved</div>
-                        <div class="flow-label-right">Payment processing</div>
-                    </div>
-                    <div class="txn-ref">
-                        Reference: TXN-2025-04-8F3K92 <i class="bi bi-copy" style="cursor:pointer"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item 3 -->
-            <div class="activity-item">
-                <div class="activity-main">
-                    <div class="activity-info">
-                        <div class="activity-icon">
-                            <i class="bi bi-arrow-right"></i>
-                        </div>
-                        <div class="activity-details">
-                            <h4>UI Designer – Campus Event App</h4>
-                            <p>Samu</p>
-                        </div>
-                    </div>
-                    <div class="activity-meta">
-                        <span class="activity-date">Aug 30th</span>
-                        <span class="badge-status bg-released">Released</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item 4 -->
-            <div class="activity-item">
-                <div class="activity-main">
-                    <div class="activity-info">
-                        <div class="activity-icon">
-                            <i class="bi bi-arrow-right"></i>
-                        </div>
-                        <div class="activity-details">
-                            <h4>UI Designer – Campus Event App</h4>
-                            <p>Samu</p>
-                        </div>
-                    </div>
-                    <div class="activity-meta">
-                        <span class="activity-date">Aug 30th</span>
-                        <span class="badge-status bg-received">Received</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
+      </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-logo">
-                <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
-            </div>
-
-            <div class="footer-links">
-                <a href="#" class="footer-link">How It Works</a>
-                <a href="browse-jobs.html?mode=registered" class="footer-link">Browse Jobs</a>
-                <a href="#" class="footer-link">Resources</a>
-            </div>
-
-            <div class="footer-social">
-                <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
-                <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-            </div>
+  <!-- ======================================================================
+       TRANSACTION DETAIL MODAL
+       payment.js → viewTransactionDetail() populates and opens this modal
+  ====================================================================== -->
+  <div class="modal fade" id="transactionDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Transaction Detail</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-    </footer>
-
-    <!-- Withdrawal Funds Modal -->
-    <div class="modal fade" id="withdrawFundsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content p-3">
-                <div class="modal-header border-0">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle border d-flex align-items-center justify-content-center"
-                            style="width: 48px; height: 48px;">
-                            <i class="bi bi-credit-card fs-4 text-secondary"></i>
-                        </div>
-                        <h4 class="modal-title fw-bold">Withdraw funds</h4>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Wallet Section -->
-                    <div class="border rounded-3 p-3 mb-3">
-                        <p class="mb-1 fw-medium">Wallet</p>
-                        <p class="text-secondary small mb-2">Available balance</p>
-                        <h3 class="fw-bold mb-0">N40,000</h3>
-                    </div>
-
-                    <!-- Payout Account -->
-                    <div class="border rounded-3 p-3 mb-3">
-                        <p class="mb-3 fw-medium">Payout Account</p>
-                        <!-- Container for dynamic injection -->
-                        <div class="payout-account-list">
-                            <!-- JS will inject .row and cols here -->
-                        </div>
-                    </div>
-
-                    <!-- Amount -->
-                    <div class="mb-2">
-                        <label class="fw-medium mb-2">Amount to with draw</label>
-                        <input type="text" class="form-control form-control-lg" placeholder="N0.00">
-                    </div>
-                </div>
-                <div class="modal-footer border-0 justify-content-between">
-                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-light px-4" id="btn-confirm-withdraw"
-                        style="background-color: #e5e7eb; color: #1f2937;">Withdraw</button>
-                </div>
-            </div>
+        <div class="modal-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-4">Description</dt>
+            <dd class="col-sm-8" id="txd-description">—</dd>
+            <dt class="col-sm-4">Amount</dt>
+            <dd class="col-sm-8" id="txd-amount">—</dd>
+            <dt class="col-sm-4">Type</dt>
+            <dd class="col-sm-8" id="txd-type">—</dd>
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8" id="txd-status">—</dd>
+            <dt class="col-sm-4">Date</dt>
+            <dd class="col-sm-8" id="txd-date">—</dd>
+            <dt class="col-sm-4">Reference</dt>
+            <dd class="col-sm-8" id="txd-reference">—</dd>
+          </dl>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Withdrawal Success Modal -->
-    <div class="modal fade" id="withdrawalSuccessModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center p-4">
-                <div class="modal-header border-0 pb-0 justify-content-end">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-4">
-                        <img src="assets/illustration-working.jpg" alt="Success" class="rounded-circle"
-                            style="width: 120px; height: 120px; object-fit: cover; filter: grayscale(100%);">
-                        <!-- Placeholder for the line art illustration -->
-                    </div>
-
-                    <h4 class="fw-bold mb-3">Withdrawal successful</h4>
-                    <p class="text-secondary mb-4">N10,000 has been sent to your bank account.</p>
-
-                    <button class="btn btn-primary px-4" style="background-color: #3b82f6; border: none;">View wallet
-                        activity</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/payment.js"></script>
-    <script src="assets/notifications.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/notifications.js" defer></script>
+  <script src="js/payment.js" defer></script>
 </body>
-
 </html>

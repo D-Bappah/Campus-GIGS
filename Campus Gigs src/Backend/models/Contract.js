@@ -1,5 +1,4 @@
 // =============================================================================
-// models/Contract.js
 // -----------------------------------------------------------------------------
 // A Contract is created when a client accepts a freelancer's application.
 // It tracks the lifecycle of the actual work engagement from start to completion.

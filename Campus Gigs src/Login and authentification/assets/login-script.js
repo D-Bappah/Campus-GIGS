@@ -42,48 +42,35 @@ document.addEventListener('DOMContentLoaded', () => {
   
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Clear previous errors
-        document.querySelectorAll('.error-msg').forEach(el => el.remove());
-        document.querySelectorAll('.form-control').forEach(el => el.style.borderColor = '');
-    
+
+        // 1. THIS IS THE CRUCIAL PART: Grab the actual text typed into the boxes
         const email = emailInput.value.trim();
         const password = passwordInput.value;
 
-        // Basic validation
-        if (!email) return showError(emailInput, "Email is required");
-        if (!password) return showError(passwordInput, "Password is required");
-
-        // Button Loading State
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Logging in...';
         submitBtn.disabled = true;
     
-       try {
+        try {
             const res = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password }) 
             });
     
             const data = await res.json();
     
             if (res.ok) {
-                // 1. Save the token
+                // Save the token AND the role
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('userRole', data.user.role);
                 
-                // 2. Decide where to go
-                if (data.user && data.user.onboardingComplete === true) {
-                    console.log("Onboarding complete. Going to Dashboard.");
-                    window.location.href = '../Dashboard/dashboard.html'; 
-                } else {
-                    console.log("Onboarding incomplete. Going to Setup.");
-                    window.location.href = '../Onboarding/personal-info.html';
-                }
+                // Send them directly to the Dashboard
+                window.location.href = '../Dashboard/dashboard.html'; 
             } else {
-                // THIS WAS MISSING: Show error if password/email is wrong
-                showError(passwordInput, data.message || "Invalid credentials.");
+                // Show error if password/email is wrong
+                alert(data.message || "Invalid credentials.");
             }
         } catch (err) {
             console.error("Connection Error:", err);
@@ -92,6 +79,5 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
-
-    }); 
+    });
 });

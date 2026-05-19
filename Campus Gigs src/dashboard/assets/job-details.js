@@ -1,245 +1,97 @@
-// =============================================================================
-// frontend/js/job-details.js
-// -----------------------------------------------------------------------------
-// Handles data fetching and DOM rendering for job-details.html.
-//
-// This page is reached by appending ?id=<jobId> to the URL, e.g.:
-//   job-details.html?id=64a1f2b3c4d5e6f7a8b9c0d1
-//
-// The page is PUBLIC (viewable without login) but the "Apply" button
-// is only shown to logged-in users who are not the job's poster.
-// =============================================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. GRAB THE JOB ID FROM THE URL (e.g., job-details.html?id=12345abcde)
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobId = urlParams.get('id');
 
-const API_BASE = "http://localhost:5000/api";
-
-// =============================================================================
-// UTILITY: getAuthHeaders — returns auth header if token exists, else {}
-// We use this instead of a guard so public parts of the page still render
-// even when the user is not logged in.
-// =============================================================================
-function getAuthHeaders() {
-  const token = localStorage.getItem("token");
-  return token
-    ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
-    : { "Content-Type": "application/json" };
-}
-
-function handleAuthError(response) {
-  if (response.status === 401) {
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
-    return true;
-  }
-  return false;
-}
-
-// =============================================================================
-// UTILITY: getJobIdFromUrl()
-// Parses the `id` query parameter from the current URL.
-// Returns null if not present, triggering a "job not found" state.
-// =============================================================================
-function getJobIdFromUrl() {
-  return new URLSearchParams(window.location.search).get("id");
-}
-
-// =============================================================================
-// CORE: loadJobDetails()
-// Fetches the single job document from the API and renders the full detail view.
-// =============================================================================
-async function loadJobDetails() {
-  const jobId = getJobIdFromUrl();
-
-  if (!jobId) {
-    renderError("No job ID provided. Please go back and select a job.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
-      headers: getAuthHeaders(),
-    });
-
-    if (handleAuthError(response)) return;
-
-    if (response.status === 404) {
-      renderError("This job posting no longer exists.");
-      return;
+    // If there is no ID in the URL, someone navigated here by accident
+    if (!jobId) {
+        document.getElementById('job-title').textContent = "Error: No Job Selected.";
+        document.getElementById('job-description').textContent = "Please go back to the Browse Jobs feed and select a valid gig.";
+        return;
     }
 
-    if (!response.ok) {
-      throw new Error("Failed to load job details.");
+    try {
+        // 2. FETCH THE JOB DATA FROM YOUR MONGODB BACKEND
+        const response = await fetch(`http://localhost:5000/api/jobs/${jobId}`);
+        
+        if (!response.ok) throw new Error("Job not found");
+        const job = await response.json();
+
+        // 3. INJECT THE REAL DATA INTO YOUR HTML
+        document.getElementById('job-title').textContent = job.title;
+        document.getElementById('job-description').textContent = job.description;
+        document.getElementById('job-category').textContent = job.category;
+        
+        // Status Badge (Green for open, gray for anything else)
+        const statusBadge = document.getElementById('job-status-badge');
+        if (statusBadge) {
+            statusBadge.textContent = job.status.toUpperCase();
+            statusBadge.className = `badge ${job.status === 'open' ? 'bg-success' : 'bg-secondary'}`;
+        }
+
+        // Application Count
+        const countEl = document.getElementById('job-application-count');
+        if (countEl) countEl.textContent = `${job.applicationCount || 0} Proposals submitted`;
+
+        // Skills Tags
+        const skillsContainer = document.getElementById('job-skills');
+        if (skillsContainer) {
+            if (job.skills && job.skills.length > 0) {
+                skillsContainer.innerHTML = job.skills.map(s => `<span class="job-tag me-1">${s}</span>`).join('');
+            } else {
+                skillsContainer.innerHTML = '<span class="text-muted">No specific skills required</span>';
+            }
+        }
+
+        // Client Info (The person who posted the gig)
+        if (job.postedBy) {
+            document.getElementById('client-name').textContent = job.postedBy.name || 'Unknown Client';
+            document.getElementById('client-university').textContent = job.postedBy.university || 'No university listed';
+            const avatar = document.getElementById('client-avatar');
+            if (avatar && job.postedBy.avatarUrl) avatar.src = job.postedBy.avatarUrl;
+        }
+
+        // Meta Grid (Budget, Delivery Days, Posted Date)
+        const formattedBudget = `₦${(job.budget / 100).toLocaleString()}`; // Convert Kobo to Naira
+        document.getElementById('job-budget').textContent = formattedBudget;
+        document.getElementById('job-delivery-days').textContent = `${job.deliveryDays} Days`;
+        
+        const postedDate = new Date(job.createdAt).toLocaleDateString('en-NG', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('job-posted-date').textContent = postedDate;
+
+        // ==========================================================
+        // 4. THE APPLY BUTTON LOGIC
+        // ==========================================================
+        const applyBtn = document.getElementById('apply-btn');
+        const applyMessage = document.getElementById('apply-message');
+        
+        if (applyBtn) {
+            // Check if the job is closed
+            if (job.status !== 'open') {
+                applyBtn.disabled = true;
+                applyBtn.textContent = "Position Closed";
+                if (applyMessage) applyMessage.textContent = "This gig is no longer accepting applications.";
+                return;
+            }
+
+            // Make the button clickable
+            applyBtn.addEventListener('click', () => {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    // Kick them to login if they aren't registered
+                    window.location.href = '../Login and authentification/login.html'; 
+                } else {
+                    // Send them to the application form WITH the Job ID attached!
+                    window.location.href = `job-application.html?id=${job._id}`;
+                }
+            });
+        }
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        document.getElementById('job-title').textContent = "Job Not Found";
+        document.getElementById('job-description').textContent = "This job may have been deleted, or the server is offline.";
+        document.getElementById('apply-btn').disabled = true;
     }
-
-    const job = await response.json();
-
-    // Update the browser tab title so bookmarks/history are meaningful
-    document.title = `${job.title} — Campus Gigs`;
-
-    renderJobDetails(job);
-    configureApplyButton(job);
-  } catch (err) {
-    console.error("loadJobDetails error:", err);
-    renderError("Could not load job details. Please try again.");
-  }
-}
-
-// =============================================================================
-// RENDER: renderJobDetails(job)
-// Populates all the static content areas of job-details.html with real data.
-// =============================================================================
-function renderJobDetails(job) {
-  const setText = (id, text) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = text ?? "—";
-  };
-  const setHTML = (id, html) => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
-  };
-  const setAttr = (id, attr, val) => {
-    const el = document.getElementById(id);
-    if (el) el.setAttribute(attr, val);
-  };
-
-  // --- Core job info ---
-  setText("job-title", job.title);
-  setText("job-category", job.category);
-  setText("job-status", job.status);
-  setText("job-application-count", `${job.applicationCount} proposal(s)`);
-  setText("job-delivery-days", `${job.deliveryDays} day(s)`);
-  setText(
-    "job-budget",
-    new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
-      job.budget / 100
-    )
-  );
-  setText(
-    "job-posted-date",
-    new Date(job.createdAt).toLocaleDateString("en-NG", {
-      year: "numeric", month: "long", day: "numeric",
-    })
-  );
-
-  // --- Description (preserve line breaks) ---
-  setHTML(
-    "job-description",
-    job.description
-      ? job.description.replace(/\n/g, "<br>")
-      : "<em>No description provided.</em>"
-  );
-
-  // --- Skills tags ---
-  const skillsEl = document.getElementById("job-skills");
-  if (skillsEl && Array.isArray(job.skills) && job.skills.length > 0) {
-    skillsEl.innerHTML = job.skills
-      .map((s) => `<span class="badge bg-secondary me-1">${s}</span>`)
-      .join("");
-  }
-
-  // --- Client info (populated from User) ---
-  if (job.postedBy) {
-    setText("client-name", job.postedBy.name);
-    setText("client-university", job.postedBy.university || "University not set");
-    const avatarEl = document.getElementById("client-avatar");
-    if (avatarEl) {
-      avatarEl.src =
-        job.postedBy.avatarUrl || "assets/images/default-avatar.png";
-      avatarEl.alt = `${job.postedBy.name}'s avatar`;
-    }
-  }
-
-  // --- Status badge colour ---
-  const statusBadge = document.getElementById("job-status-badge");
-  if (statusBadge) {
-    const colours = {
-      open: "bg-success",
-      in_progress: "bg-warning text-dark",
-      completed: "bg-secondary",
-      cancelled: "bg-danger",
-    };
-    statusBadge.className = `badge ${colours[job.status] || "bg-secondary"}`;
-    statusBadge.textContent = job.status.replace("_", " ").toUpperCase();
-  }
-}
-
-// =============================================================================
-// RENDER: configureApplyButton(job)
-// Shows or hides the Apply button based on the viewer's authentication state
-// and relationship to the job.
-// =============================================================================
-function configureApplyButton(job) {
-  const applyBtn = document.getElementById("apply-btn");
-  const applyMsg = document.getElementById("apply-message");
-
-  if (!applyBtn) return;
-
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    // Visitor is not logged in — show a prompt to sign up/in
-    applyBtn.style.display = "none";
-    if (applyMsg) {
-      applyMsg.textContent = "Sign in to apply for this job.";
-      applyMsg.className = "text-muted small";
-    }
-    return;
-  }
-
-  // Decode the JWT payload to get the current user's ID.
-  // We don't verify the signature here (that's the server's job) — we just
-  // need the ID to compare against the job's poster.
-  let currentUserId = null;
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    currentUserId = payload.id || payload._id || payload.sub;
-  } catch {
-    // Malformed token — treat as logged out
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
-    return;
-  }
-
-  const isOwner =
-    job.postedBy && job.postedBy._id.toString() === currentUserId;
-  const isOpen = job.status === "open";
-
-  if (isOwner) {
-    applyBtn.style.display = "none";
-    if (applyMsg) {
-      applyMsg.textContent = "This is your own job posting.";
-      applyMsg.className = "text-muted small";
-    }
-  } else if (!isOpen) {
-    applyBtn.disabled = true;
-    applyBtn.textContent = "Applications Closed";
-    if (applyMsg) {
-      applyMsg.textContent = "This job is no longer accepting proposals.";
-      applyMsg.className = "text-warning small";
-    }
-  } else {
-    // User can apply — wire the button to navigate to the application form
-    applyBtn.addEventListener("click", () => {
-      window.location.href = `job-application.html?id=${job._id}`;
-    });
-  }
-}
-
-// =============================================================================
-// RENDER: renderError(message)
-// Shows a full-page error state instead of an empty broken layout.
-// =============================================================================
-function renderError(message) {
-  const container = document.getElementById("job-details-container");
-  if (container) {
-    container.innerHTML = `
-      <div class="col-12 text-center py-5">
-        <i class="bi bi-exclamation-circle fs-1 text-danger"></i>
-        <p class="mt-3 text-muted">${message}</p>
-        <a href="browse-jobs.html" class="btn btn-outline-primary mt-2">
-          Back to Browse Jobs
-        </a>
-      </div>`;
-  }
-}
-
-document.addEventListener("DOMContentLoaded", loadJobDetails);
+});

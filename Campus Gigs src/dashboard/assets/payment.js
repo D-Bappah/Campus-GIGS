@@ -1,5 +1,4 @@
 // =============================================================================
-// frontend/js/payment.js
 // -----------------------------------------------------------------------------
 // Handles all DOM interactions and API calls for payment.html.
 // This file replaces any previous localStorage-based "mirage" balance data

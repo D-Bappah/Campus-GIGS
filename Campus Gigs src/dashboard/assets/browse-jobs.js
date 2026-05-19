@@ -1,226 +1,255 @@
-document.addEventListener('DOMContentLoaded', function () {
+// ==================================================================
+// 1. FETCH AND RENDER SIDEBAR PROFILE
+// ==================================================================
+async function loadSidebarProfile() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-    // --- Fetch and Render Jobs ---
-    // We now pass 'filters' and 'page' as arguments
-    // --- Fetch and Render Jobs ---
+    try {
+        const res = await fetch('http://localhost:5000/api/users/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) return;
+        const user = await res.json();
+
+        const nameEl = document.getElementById('sidebar-name');
+        if (nameEl) nameEl.textContent = user.name || user.displayName || '&nbsp;';
+
+        const roleEl = document.getElementById('sidebar-role');
+        if (roleEl) {
+            const role = user.role || '';
+            roleEl.textContent = role ? role.charAt(0).toUpperCase() + role.slice(1) : '&nbsp;';
+        }
+
+        const projectsEl = document.getElementById('sidebar-projects');
+        if (projectsEl) projectsEl.textContent = Number(user.completedJobs || user.completedJobsCount || 0) || 0;
+
+        const ratingEl = document.getElementById('sidebar-rating');
+        if (ratingEl) {
+            const rating = Number(user.rating || 0);
+            ratingEl.textContent = rating > 0 ? rating.toFixed(1) : 'New';
+        }
+
+        const avatarImg = document.getElementById('sidebar-avatar');
+        if (avatarImg && user.avatarUrl) avatarImg.src = user.avatarUrl;
+
+        // Profile completion: base 20 + 20 per non-empty key field.
+        let completion = 20;
+        const hasBio = !!user.bio;
+        const hasUniversity = !!user.university;
+        const hasSkills = Array.isArray(user.skills) ? user.skills.length > 0 : !!user.skills;
+        const hasBankDetails = !!(user.bankDetails && (user.bankDetails.bankName || user.bankDetails.accountNumber));
+
+        if (hasBio) completion += 20;
+        if (hasUniversity) completion += 20;
+        if (hasSkills) completion += 20;
+        if (hasBankDetails) completion += 20;
+
+        completion = Math.max(0, Math.min(100, completion));
+
+        const progressBar = document.getElementById('sidebar-completion-bar');
+        const progressText = document.getElementById('sidebar-completion-text');
+
+        if (progressBar) {
+            progressBar.style.width = `${completion}%`;
+            progressBar.setAttribute('aria-valuenow', String(completion));
+        }
+        if (progressText) progressText.textContent = `${completion}%`;
+    } catch (err) {
+        console.error('Failed to load sidebar profile:', err);
+    }
+}
+
+// ==================================================================
+// 2. MAIN BROWSE JOBS LOGIC
+// ==================================================================
+document.addEventListener('DOMContentLoaded', function () {
     const loadJobs = async (filters = {}, page = 1) => {
         const jobsContainer = document.getElementById('jobs-container');
-        jobsContainer.innerHTML = '<div class="text-center text-secondary py-5"><div class="spinner-border text-primary mb-3"></div><p>Loading campus gigs...</p></div>';
-        
+        if (!jobsContainer) return;
+
+        jobsContainer.innerHTML = '<div class="text-center text-secondary py-5"><div class="spinner-border text-primary mb-3" role="status"></div><p>Loading campus gigs...</p></div>';
+
         try {
-            // 1. Construct the URL
             let url = `http://localhost:5000/api/jobs?page=${page}`;
             if (filters.experienceLevel) url += `&experienceLevel=${filters.experienceLevel}`;
             if (filters.location) url += `&location=${filters.location}`;
+            if (filters.searchText) url += `&searchText=${encodeURIComponent(filters.searchText)}`;
 
             const response = await fetch(url);
             if (!response.ok) throw new Error('Failed to fetch jobs');
-            
-            // 2. Parse the new rich object from the backend
+
             const data = await response.json();
-            console.log("THE SERVER SENT EXACTLY THIS:", data);
-            
-            // 3. Safely extract the array of jobs
-            const jobsArray = data.jobs; 
-            
-            // Safety check: If the array isn't there, force an error so we can see why
-            if (!jobsArray) {
-                throw new Error("The backend object is missing the 'jobs' array!");
-            }
+            const jobsArray = data.jobs;
+
+            if (!jobsArray) throw new Error("The backend object is missing the 'jobs' array!");
 
             if (jobsArray.length === 0) {
                 jobsContainer.innerHTML = '<p class="text-center text-secondary py-5">No jobs match your filters. Try adjusting your search!</p>';
                 return;
             }
 
-            // 4. Map the HTML
             const jobsHTML = jobsArray.map(job => {
                 const postedDate = new Date(job.createdAt);
                 const hoursAgo = Math.floor((new Date() - postedDate) / (1000 * 60 * 60));
-                const timeString = hoursAgo < 24 ? `${hoursAgo} hours ago` : `${Math.floor(hoursAgo/24)} days ago`;
-                
-                // Safety check for tags just in case
-                const tagsHTML = (job.tags || []).map(tag => `<span class="job-tag">${tag}</span>`).join('');
+                const timeString = hoursAgo < 24 ? `${hoursAgo} hours ago` : `${Math.floor(hoursAgo / 24)} days ago`;
+
+                const tagsHTML = (job.skills || []).map(skill => `<span class="job-tag">${skill}</span>`).join('');
+
+                const formattedBudget = `₦${(job.budget / 100).toLocaleString()}`;
 
                 return `
                     <div class="job-card">
                         <div class="job-posted-time">Posted ${timeString}</div>
                         <div class="job-header">
-                            <img src="../Login and authentification/assets/logo.png" class="company-logo" alt="Company">
-                            <div>
-                                <h4 class="job-title">${job.title}</h4>
-                                <div class="job-meta-row">
-                                    <span>${job.priceRange}</span>
-                                    <span class="job-meta-dot"></span>
-                                    <span>${job.experienceLevel}</span>
-                                    <span class="job-meta-dot"></span>
-                                    <span>${job.duration}</span>
+                            <div class="company-logo bg-primary text-white d-flex align-items-center justify-content-center fw-bold rounded">CG</div>
+                            <div class="ms-3">
+                                <h4 class="job-title mb-1">${job.title}</h4>
+                                <div class="job-meta-row mb-0">
+                                    <span class="fw-semibold text-success">${formattedBudget}</span>
+                                    <span class="job-meta-dot mx-2"></span>
+                                    <span>${job.category}</span>
+                                    <span class="job-meta-dot mx-2"></span>
+                                    <span><i class="bi bi-clock me-1"></i>${job.deliveryDays} Days</span>
                                 </div>
                             </div>
                         </div>
-                        <p class="job-desc">${job.description}</p>
+                        <p class="job-desc mt-3">${job.description.substring(0, 150)}...</p>
                         <div class="job-tags">${tagsHTML}</div>
-                        <div class="job-location">
-                            <i class="bi bi-geo-alt"></i> ${job.location}
+                        <div class="job-location mt-3">
+                            <i class="bi bi-geo-alt"></i> ${job.location || 'Remote'}
+                            ${job.isUrgent ? '<span class="badge bg-danger ms-2">Urgent</span>' : ''}
                         </div>
                         <div class="mt-3">
-                            <button class="btn btn-primary" onclick="handleApplyClick('${job._id}')">Apply Now</button>
+                            <button class="btn btn-primary px-4 py-2 fw-semibold" onclick="handleApplyClick('${job._id}')">View Details</button>
                         </div>
                     </div>
                 `;
             }).join('');
 
             jobsContainer.innerHTML = jobsHTML;
-// Build the page numbers based on what the server just sent
             renderPagination(data.currentPage, data.totalPages);
-            
         } catch (error) {
             console.error('Error loading jobs:', error);
             jobsContainer.innerHTML = '<p class="text-danger text-center py-5">Failed to load jobs. Please ensure the server is running.</p>';
         }
     };
 
-    // --- Render Pagination UI ---
     const renderPagination = (currentPage, totalPages) => {
         const paginationContainer = document.getElementById('pagination-container');
-        if (!paginationContainer) return;
-
-        // If there is only 1 page of jobs, don't show the pagination bar at all
-        if (totalPages <= 1) {
-            paginationContainer.innerHTML = '';
+        if (!paginationContainer || totalPages <= 1) {
+            if (paginationContainer) paginationContainer.innerHTML = '';
             return;
         }
 
         let html = '<ul class="pagination justify-content-center">';
-
-        // 1. Previous Button
         const prevDisabled = currentPage === 1 ? 'disabled' : '';
-        html += `
-            <li class="page-item ${prevDisabled}">
-                <a class="page-link" href="#" onclick="changePage(${currentPage - 1}, ${totalPages}); return false;">Previous</a>
-            </li>
-        `;
+        html += `<li class="page-item ${prevDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage - 1}, ${totalPages}); return false;">Previous</a></li>`;
 
-        // 2. The Page Numbers (1, 2, 3...)
         for (let i = 1; i <= totalPages; i++) {
             const activeClass = i === currentPage ? 'active' : '';
-            html += `
-                <li class="page-item ${activeClass}">
-                    <a class="page-link" href="#" onclick="changePage(${i}, ${totalPages}); return false;">${i}</a>
-                </li>
-            `;
+            html += `<li class="page-item ${activeClass}"><a class="page-link" href="#" onclick="changePage(${i}, ${totalPages}); return false;">${i}</a></li>`;
         }
 
-        // 3. Next Button
         const nextDisabled = currentPage === totalPages ? 'disabled' : '';
-        html += `
-            <li class="page-item ${nextDisabled}">
-                <a class="page-link" href="#" onclick="changePage(${currentPage + 1}, ${totalPages}); return false;">Next</a>
-            </li>
-        `;
-
-        html += '</ul>';
+        html += `<li class="page-item ${nextDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage + 1}, ${totalPages}); return false;">Next</a></li></ul>`;
         paginationContainer.innerHTML = html;
     };
-    
-    // Execute the fetch immediately
-    loadJobs();
 
-    // Determine mode from URL parameter
     const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode'); // 'guest' or 'registered'
+    const mode = urlParams.get('mode');
 
-    // Elements
     const publicHeader = document.getElementById('publicHeader');
     const dashboardHeader = document.getElementById('dashboardHeader');
     const guestSidebar = document.getElementById('guestSidebar');
     const registeredSidebar = document.getElementById('registeredSidebar');
 
-    // Logic: Default to Guest if no param or explicit 'guest'
     if (mode === 'registered') {
-        // Show Registered UI
         if (publicHeader) publicHeader.style.display = 'none';
         if (dashboardHeader) dashboardHeader.style.display = 'block';
         if (guestSidebar) guestSidebar.style.display = 'none';
         if (registeredSidebar) registeredSidebar.style.display = 'block';
+        loadSidebarProfile();
     } else {
-        // Show Guest UI (Default)
         if (publicHeader) publicHeader.style.display = 'block';
         if (dashboardHeader) dashboardHeader.style.display = 'none';
         if (guestSidebar) guestSidebar.style.display = 'block';
         if (registeredSidebar) registeredSidebar.style.display = 'none';
     }
 
-    // --- Sidebar Filtering Logic ---
     let currentFilters = {};
     let currentPage = 1;
 
-    // Make this globally available so the HTML buttons can click it
     window.changePage = (newPage, totalPages) => {
-        // Stop them from clicking "Previous" on page 1, or "Next" on the last page
-        if (newPage < 1 || newPage > totalPages) return; 
-
+        if (newPage < 1 || newPage > totalPages) return;
         currentPage = newPage;
         loadJobs(currentFilters, currentPage);
-        
-        // Smoothly scroll the user back to the top of the feed
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    
-    // Find all the filter inputs in your sidebar (Assuming you gave them a class like 'filter-input')
-    // Alternatively, you can target specific IDs if you used them in your HTML
-    const filterInputs = document.querySelectorAll('.filter-checkbox, .filter-radio');
 
+    const filterInputs = document.querySelectorAll('.filter-checkbox, .filter-radio');
     filterInputs.forEach(input => {
         input.addEventListener('change', () => {
-            // Reset to page 1 whenever a new filter is applied
-            currentPage = 1; 
+            currentPage = 1;
+            const searchText = typeof currentFilters.searchText === 'string' ? currentFilters.searchText : undefined;
             currentFilters = {};
+            if (searchText) currentFilters.searchText = searchText;
 
-            // Example: Check which Experience Level radio is selected
             const expLevelChecked = document.querySelector('input[name="experienceLevel"]:checked');
-            if (expLevelChecked && expLevelChecked.value !== 'All') {
-                currentFilters.experienceLevel = expLevelChecked.value;
-            }
-
-            // Example: Check Location
+            if (expLevelChecked && expLevelChecked.value !== 'All') currentFilters.experienceLevel = expLevelChecked.value;
             const locationChecked = document.querySelector('input[name="location"]:checked');
-            if (locationChecked && locationChecked.value !== 'All') {
-                currentFilters.location = locationChecked.value;
-            }
-
-            // Fetch the newly filtered data
+            if (locationChecked && locationChecked.value !== 'All') currentFilters.location = locationChecked.value;
             loadJobs(currentFilters, currentPage);
         });
     });
 
-    // Execute the very first fetch on page load with no filters
-    loadJobs(currentFilters, currentPage);
+    const searchInput = document.querySelector('.search-input-lg');
+    if (searchInput) {
+        const debounce = (fn, ms = 300) => {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), ms);
+            };
+        };
 
+        const applySearch = debounce(() => {
+            currentPage = 1;
+            const text = (searchInput.value || '').trim();
+            if (text) currentFilters.searchText = text;
+            else delete currentFilters.searchText;
+            loadJobs(currentFilters, currentPage);
+        }, 300);
+
+        searchInput.addEventListener('input', applySearch);
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applySearch();
+            }
+        });
+    }
+
+    loadJobs(currentFilters, currentPage);
 });
 
-// exposed function for Apply buttons
-window.handleApplyClick = function () {
+window.handleApplyClick = function (jobId) {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
     if (mode === 'registered') {
-        // Go to Job Details (Registered View)
-        window.location.href = 'job-details.html?mode=registered';
+        window.location.href = `job-details.html?id=${jobId}&mode=registered`;
     } else {
-        // Redirect to Sign Up / Onboarding
-        window.location.href = '../Login and authentification/SIgn up.html';
+        window.location.href = '../Login and authentification/login.html';
     }
 };
 
-// Helper for User to switch modes via console
 window.switchMode = function (mode) {
     if (mode === 'registered' || mode === 'guest') {
         const url = new URL(window.location);
         url.searchParams.set('mode', mode);
         window.location.href = url.toString();
-        console.log("Switching to " + mode + " mode...");
-    } else {
-        console.warn("Invalid mode. Use 'registered' or 'guest'.");
     }
 };
+

@@ -1,5 +1,4 @@
 // =============================================================================
-// routes/wallet.js
 // -----------------------------------------------------------------------------
 // All wallet and payment-related API endpoints.
 // Base path (registered in server.js): /api/wallet

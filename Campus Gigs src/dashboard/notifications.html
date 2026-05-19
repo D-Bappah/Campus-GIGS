@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications — Campus Gigs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+</head>
+<body class="bg-light">
+
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">🎓 Campus Gigs</a>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <a href="work.html"    class="nav-link text-white">My Work</a>
+        <a href="payment.html" class="nav-link text-white"><i class="bi bi-wallet2 fs-5"></i></a>
+        <a href="message.html" class="nav-link text-white"><i class="bi bi-chat-dots fs-5"></i></a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4" style="max-width: 720px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="fw-bold mb-0">Notifications</h4>
+        <small class="text-muted">
+          <span id="notif-unread-count">0</span> unread
+        </small>
+      </div>
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        onclick="markAllNotificationsRead()"
+      >
+        <i class="bi bi-check2-all me-1"></i> Mark all as read
+      </button>
+    </div>
+
+    <!-- notifications.js detects #notifications-page-list and renders full list -->
+    <div class="card shadow-sm border-0">
+      <div id="notifications-page-list">
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+      </div>
+
+      <!-- Pagination controls -->
+      <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+        <button id="notif-prev" class="btn btn-sm btn-outline-secondary" disabled>
+          <i class="bi bi-chevron-left"></i> Previous
+        </button>
+        <span id="notif-page-info" class="text-muted small">Page 1 of 1</span>
+        <button id="notif-next" class="btn btn-sm btn-outline-secondary" disabled>
+          Next <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- notifications.js serves dual duty: nav badge on all pages + full list on this page -->
+  <script src="js/notifications.js" defer></script>
+</body>
+</html>
