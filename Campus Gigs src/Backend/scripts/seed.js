@@ -31,7 +31,7 @@ const TEST_PASSWORD = "Password123!";
 const seedUsers = [
   {
     name: "Chidi Okeke",
-    email: "chidi@test.com",
+    email: "chidi@nileuniversity.edu.ng",
     studentId: "20220001",
     role: "freelancer",
     university: "University of Lagos",
@@ -43,7 +43,7 @@ const seedUsers = [
   },
   {
     name: "Amina Bello",
-    email: "amina@test.com",
+    email: "amina@nileuniversity.edu.ng",
     studentId: "20220002",
     role: "freelancer",
     university: "Ahmadu Bello University",
@@ -55,7 +55,7 @@ const seedUsers = [
   },
   {
     name: "Emeka Nwosu",
-    email: "emeka@test.com",
+    email: "emeka@gmail.com",
     studentId: "20220003",
     role: "client",
     university: "University of Nigeria, Nsukka",
@@ -67,7 +67,7 @@ const seedUsers = [
   },
   {
     name: "Fatima Aliyu",
-    email: "fatima@test.com",
+    email: "fatima@gmail.com",
     studentId: "20220004",
     role: "client",
     university: "Bayero University Kano",
@@ -121,7 +121,7 @@ async function seed() {
   const users = await User.insertMany(usersWithPasswords);
   const [chidi, amina, emeka, fatima] = users;
   console.log(`   Created ${users.length} users.`);
-  console.log(`   Login with any of: chidi@test.com, amina@test.com, emeka@test.com, fatima@test.com`);
+  console.log(`   Login with any of: chidi@nileuniversity.edu.ng, amina@nileuniversity.edu.ng, emeka@gmail.com, fatima@gmail.com`);
   console.log(`   Password for all: ${TEST_PASSWORD}`);
 
   // ---------------------------------------------------------------------------
@@ -495,10 +495,10 @@ async function seed() {
   console.log("\nâ Seed complete! Here's your test data:");
   console.log("â".repeat(60));
   console.log("USERS (password for all: Password123!)");
-  console.log(`  Freelancer: chidi@test.com  (ID: ${chidi._id})`);
-  console.log(`  Freelancer: amina@test.com  (ID: ${amina._id})`);
-  console.log(`  Client:     emeka@test.com  (ID: ${emeka._id})`);
-  console.log(`  Client:     fatima@test.com (ID: ${fatima._id})`);
+  console.log(`  Freelancer: chidi@nileuniversity.edu.ng  (ID: ${chidi._id})`);
+  console.log(`  Freelancer: amina@nileuniversity.edu.ng  (ID: ${amina._id})`);
+  console.log(`  Client:     emeka@gmail.com  (ID: ${emeka._id})`);
+  console.log(`  Client:     fatima@gmail.com (ID: ${fatima._id})`);
   console.log("\nJOBS");
   console.log(`  Open:       "${logoJob.title}" (ID: ${logoJob._id})`);
   console.log(`  Open:       "${blogJob.title.substring(0, 40)}..." (ID: ${blogJob._id})`);

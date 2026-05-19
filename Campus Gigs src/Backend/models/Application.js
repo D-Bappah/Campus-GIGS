@@ -96,6 +96,8 @@ const ApplicationSchema = new mongoose.Schema(
     //
     // For now, this field is optional — text-only applications are allowed.
     // ─────────────────────────────────────────────────────────────────────────
+    attachmentUrl: { type: String, default: null },
+    
     resumeUrl: {
       type: String,
       default: null,

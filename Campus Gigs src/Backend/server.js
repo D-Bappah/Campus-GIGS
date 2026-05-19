@@ -12,7 +12,7 @@ const allowedOrigins = [
     'http://127.0.0.1:5500',           
     'http://localhost:5500',           
     'http://127.0.0.1:5501',           
-    'http://localhost:5501'           
+    'http://localhost:5501'          
 ];
 
 const corsOptions = {
@@ -45,6 +45,7 @@ app.use('/api/contracts', require('./routes/contracts'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/wallet', require('./routes/wallet'));
 app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/applications', require('./routes/applications'));
 
 // 3. Database Connection & Server Start
 // Staying strictly on local port 5000 for stability

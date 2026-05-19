@@ -168,14 +168,29 @@ async function handleApplicationSubmit(event) {
   }
 
   try {
+    const token = localStorage.getItem('token');
+    
+    // 1. Manually build the FormData object
+    const formData = new FormData();
+    formData.append('coverLetter', coverLetter);
+    formData.append('bidAmount', bidAmountNaira);
+    formData.append('deliveryDays', deliveryDays);
+    
+    // 2. Grab the actual file if they uploaded one
+    const fileInput = document.getElementById('file-attachment');
+    if (fileInput && fileInput.files.length > 0) {
+        // 'attachment' MUST match the backend: upload.single('attachment')
+        formData.append('attachment', fileInput.files[0]);
+    }
+
+    // 3. Send it to your backend
     const response = await fetch(`${API_BASE}/jobs/${jobId}/apply`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        coverLetter,
-        bidAmount: bidAmountNaira, // server converts to kobo
-        deliveryDays,
-      }),
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+        // CRUCIAL: Do NOT set Content-Type here. The browser sets it automatically for files!
+      },
+      body: formData // Send the bundled data
     });
 
     if (handleAuthError(response)) return;
@@ -187,34 +202,32 @@ async function handleApplicationSubmit(event) {
     }
 
     // -------------------------------------------------------------------------
-    // Success — show confirmation and disable the form to prevent re-submission.
-    // We don't redirect immediately so the user can read the success message
-    // and click "View Job" at their own pace.
+    // Success — show confirmation and disable the form
     // -------------------------------------------------------------------------
     if (successEl) {
       successEl.textContent = data.message || "Application submitted!";
       successEl.classList.remove("d-none");
     }
 
-    // Disable all form inputs after successful submission
     document
       .getElementById("application-form")
       ?.querySelectorAll("input, textarea, button")
       .forEach((el) => (el.disabled = true));
 
-    // Offer a link back to the job or to browse more jobs
     const redirectEl = document.getElementById("post-submit-actions");
     if (redirectEl) {
       redirectEl.innerHTML = `
         <a href="job-details.html?id=${jobId}" class="btn btn-outline-primary me-2">
-          View Job
+          Back to Job
         </a>
-        <a href="browse-jobs.html" class="btn btn-outline-secondary">
-          Browse More Jobs
+        <a href="work.html" class="btn btn-outline-secondary">
+          View My Work
         </a>`;
       redirectEl.classList.remove("d-none");
     }
   } catch (err) {
+// ... keep the rest of your catch block exactly the same ...
+
     console.error("handleApplicationSubmit error:", err);
     if (errorEl) {
       errorEl.textContent = err.message;

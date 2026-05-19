@@ -91,6 +91,8 @@ const ContractSchema = new mongoose.Schema(
     // For text-based deliverables (e.g., copywriting), the freelancer can
     // paste content into a `deliverableNote` text field (add that field below).
     // ─────────────────────────────────────────────────────────────────────────
+
+    
     deliverableUrl: {
       type: String,
       default: null,
@@ -100,6 +102,7 @@ const ContractSchema = new mongoose.Schema(
     // deliverableNote — text-based delivery (no file needed).
     // E.g., "I've pushed the code to https://github.com/... See branch 'feature/x'"
     // -------------------------------------------------------------------------
+    submissionUrl: { type: String, default: null },
     deliverableNote: {
       type: String,
       default: null,

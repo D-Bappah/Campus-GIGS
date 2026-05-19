@@ -277,6 +277,18 @@
     <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // 1. Get the Contract ID from the URL (e.g., task-submission.html?id=65a123...)
+        const urlParams = new URLSearchParams(window.location.search);
+        const contractId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!contractId) {
+                alert("Error: No active contract selected.");
+                window.location.href = "work.html"; // Send them back if no ID is found
+            }
+        });
+
+        // 2. Update File Name UI when a user selects a file
         function updateFileName(input) {
             const fileNamesDiv = document.getElementById('fileNames');
             if (input.files.length > 0) {
@@ -290,20 +302,65 @@
             }
         }
 
-        function handleSubmission(event) {
+        // 3. Handle the actual Cloudinary / Backend Submission
+        async function handleSubmission(event) {
             event.preventDefault();
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../Login and authentification/login.html';
+                return;
+            }
+
             const btn = document.querySelector('.btn-submit');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading & Submitting...';
             btn.disabled = true;
 
-            setTimeout(() => {
-                alert('Task submitted successfully!');
+            try {
+                // Initialize FormData to handle the physical file
+                const formData = new FormData();
+                
+                // Grab the text notes
+                const notes = document.getElementById('taskNotes').value;
+                formData.append('deliverableNote', notes);
+
+                // Grab the file
+                const fileInput = document.getElementById('taskFiles');
+                if (fileInput.files.length > 0) {
+                    // 'workFile' MUST match what your backend expects in upload.single('workFile')
+                    formData.append('workFile', fileInput.files[0]);
+                } else {
+                    throw new Error("Please select a file to submit.");
+                }
+
+                // Send it to your backend
+                const response = await fetch(`http://localhost:5000/api/contracts/${contractId}/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                        // Do NOT set Content-Type; the browser sets it automatically for FormData
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Task submitted successfully! The client will review it shortly.');
+                    window.location.href = 'work.html'; // Redirect to their active jobs
+                } else {
+                    throw new Error(data.message || "Failed to submit work.");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert(err.message);
+            } finally {
+                // Reset button state if it fails (if successful, they will be redirected anyway)
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                document.getElementById('taskSubmissionForm').reset();
-                document.getElementById('fileNames').innerHTML = '';
-            }, 1500);
+            }
         }
     </script>
 </body>

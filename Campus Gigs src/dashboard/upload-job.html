@@ -332,11 +332,11 @@
                     <h1 class="upload-title">Post a New Job</h1>
                     <p class="upload-subtitle">Provide details about the gig to attract the right talent.</p>
 
-                    <form id="jobUploadForm" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+                    <form id="jobUploadForm">
                         
                         <div class="mb-4">
                             <label for="jobTitle" class="form-label">Job Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="jobTitle" placeholder="e.g. Need a UI/UX Designer for a Mobile App" required>
+                            <input type="text" class="form-control" id="jobTitle" placeholder="e.g. Need a UI/UX Designer for a Mobile App" required minlength="10">
                         </div>
 
                         <div class="row mb-4">
@@ -344,12 +344,13 @@
                                 <label for="jobCategory" class="form-label">Category <span class="text-danger">*</span></label>
                                 <select class="form-select" id="jobCategory" required>
                                     <option value="" selected disabled>Select a category</option>
-                                    <option value="design">Design & Creative</option>
-                                    <option value="development">Web & App Development</option>
-                                    <option value="writing">Writing & Translation</option>
-                                    <option value="marketing">Digital Marketing</option>
-                                    <option value="video">Video & Animation</option>
-                                    <option value="admin">Admin & Customer Support</option>
+                                    <option value="Design & Creative">Design & Creative</option>
+                                    <option value="Programming & Tech">Web & App Development</option>
+                                    <option value="Writing & Content">Writing & Translation</option>
+                                    <option value="Marketing & Social Media">Digital Marketing</option>
+                                    <option value="Video & Animation">Video & Animation</option>
+                                    <option value="Admin & Virtual Assistant">Admin & Customer Support</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mt-4 mt-md-0">
@@ -431,5 +432,74 @@
     <!-- Bootstrap JS -->
     <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
 
+    <script>
+        document.getElementById('jobUploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../Login and authentification/login.html';
+                return;
+            }
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Posting...';
+            submitBtn.disabled = true;
+
+            try {
+                // 1. Calculate Delivery Days from the selected Deadline
+                const deadlineInput = document.getElementById('deadline').value;
+                let deliveryDays = 7; // Default to 7 days if they leave it blank
+                
+                if (deadlineInput) {
+                    const deadlineDate = new Date(deadlineInput);
+                    const today = new Date();
+                    // Calculate difference in time, then divide by milliseconds in a day
+                    const diffTime = Math.abs(deadlineDate - today);
+                    deliveryDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                }
+
+                // 2. Build the Payload
+                const payload = {
+                    title: document.getElementById('jobTitle').value.trim(),
+                    category: document.getElementById('jobCategory').value,
+                    description: document.getElementById('jobDescription').value.trim(),
+                    skills: document.getElementById('requiredSkills').value,
+                    budget: document.getElementById('budget').value,
+                    deliveryDays: deliveryDays,
+                    location: "Remote" // Defaulting to remote
+                };
+
+                // 3. Send to the API
+                const response = await fetch('http://localhost:5000/api/jobs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Job posted successfully!");
+                    // Send them straight to their shiny new job posting!
+                    window.location.href = `job-details.html?id=${data.job._id}&mode=registered`;
+                } else {
+                    throw new Error(data.message || "Failed to post job.");
+                }
+
+            } catch (err) {
+                console.error("Upload Error:", err);
+                alert(err.message);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+    
 </body>
 </html>

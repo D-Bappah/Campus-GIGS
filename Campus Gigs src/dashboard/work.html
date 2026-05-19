@@ -437,112 +437,24 @@
     <!-- Main Content -->
     <div class="container pb-5">
         <div class="row">
-            <!-- Sidebar -->
             <div class="col-md-2">
-                <nav class="d-flex flex-column">
-                    <a href="#" class="sidebar-link active" data-filter="all">All</a>
-                    <a href="#" class="sidebar-link" data-filter="active">Active</a>
-                    <a href="#" class="sidebar-link" data-filter="pending">Pending</a>
-                    <a href="#" class="sidebar-link" data-filter="completed">Completed</a>
+                <nav class="d-flex flex-column" id="filter-sidebar">
+                    <a href="#" class="sidebar-link active" onclick="filterWork('all'); return false;">All</a>
+                    <a href="#" class="sidebar-link" onclick="filterWork('pending'); return false;">Pending</a>
+                    <a href="#" class="sidebar-link" onclick="filterWork('accepted'); return false;">Completed / Hired</a>
+                    <a href="#" class="sidebar-link" onclick="filterWork('rejected'); return false;">Declined</a>
                 </nav>
             </div>
 
-            <!-- Content Area -->
             <div class="col-md-10">
-                <!-- Empty State -->
-                <div id="empty-state" class="empty-state d-none">
-                    <h3>No contracts yet!</h3>
-                    <p>This is where you'll find all contracts for jobs you've accepted.<br>
-                        Once an employer sends you an offer and you sign the contract, it will appear here.</p>
-                    <a href="browse-jobs.html?mode=registered" class="btn-primary-custom">Browse jobs</a>
-                </div>
-
-                <!-- Contract List -->
-                <div id="contract-list" class="row g-4">
-                    <!-- Contract item 1 -->
-                    <div class="col-md-6" data-status="active">
-                        <div class="contract-card">
-                            <span class="badge-status status-active">Active</span>
-                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
-                            <div class="contract-meta">Posted by: Student affairs office</div>
-                            <div class="contract-details">
-                                <span>Pay: N50,000</span>
-                                <span class="dot-sep"></span>
-                                <span>3 weeks</span>
-                                <span class="dot-sep"></span>
-                                <span>Start: Aug 3rd 2025</span>
-                            </div>
-                            <div class="action-btns">
-                                <a href="contract-details.html" class="btn-view">View contract</a>
-                                <button class="btn-download">Download PDF</button>
-                            </div>
-                        </div>
+                <div id="work-container" class="row g-4">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary mb-3"></div>
+                        <p>Loading your work history...</p>
                     </div>
-
-                    <!-- Contract item 2 -->
-                    <div class="col-md-6" data-status="active">
-                        <div class="contract-card">
-                            <span class="badge-status status-active">Active</span>
-                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
-                            <div class="contract-meta">Posted by: Student affairs office</div>
-                            <div class="contract-details">
-                                <span>Pay: N50,000</span>
-                                <span class="dot-sep"></span>
-                                <span>3 weeks</span>
-                                <span class="dot-sep"></span>
-                                <span>Start: Aug 3rd 2025</span>
-                            </div>
-                            <div class="action-btns">
-                                <a href="contract-details.html" class="btn-view">View contract</a>
-                                <button class="btn-download">Download PDF</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contract item 3 -->
-                    <div class="col-md-6" data-status="completed">
-                        <div class="contract-card">
-                            <span class="badge-status status-completed">Completed</span>
-                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
-                            <div class="contract-meta">Posted by: Student affairs office</div>
-                            <div class="contract-details">
-                                <span>Pay: N50,000</span>
-                                <span class="dot-sep"></span>
-                                <span>3 weeks</span>
-                                <span class="dot-sep"></span>
-                                <span>Start: Aug 3rd 2025</span>
-                            </div>
-                            <div class="action-btns">
-                                <a href="contract-details.html" class="btn-view">View contract</a>
-                                <button class="btn-download">Download PDF</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contract item 4 -->
-                    <div class="col-md-6" data-status="completed">
-                        <div class="contract-card">
-                            <span class="badge-status status-completed">Completed</span>
-                            <h3 class="contract-title">UI/UX Design for campus event website</h3>
-                            <div class="contract-meta">Posted by: Student affairs office</div>
-                            <div class="contract-details">
-                                <span>Pay: N50,000</span>
-                                <span class="dot-sep"></span>
-                                <span>3 weeks</span>
-                                <span class="dot-sep"></span>
-                                <span>Start: Aug 3rd 2025</span>
-                            </div>
-                            <div class="action-btns">
-                                <a href="contract-details.html" class="btn-view">View contract</a>
-                                <button class="btn-download">Download PDF</button>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Footer -->
     <footer class="footer">

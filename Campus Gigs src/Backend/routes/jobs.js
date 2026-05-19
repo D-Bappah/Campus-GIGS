@@ -6,6 +6,7 @@ const Application = require("../models/Application");
 const Contract = require("../models/Contract");
 const authMiddleware = require("../middleware/authMiddleware");
 const notify = require("../utils/notificationHelper");
+const upload = require('../utils/upload');
 
 // =============================================================================
 // YOUR EXISTING ROUTES (Kept Safe!)
@@ -54,20 +55,49 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @route   POST /api/jobs (Dummy Postman Creation)
-router.post('/', async (req, res) => {
+// @route   POST /api/jobs (Create a job posting)
+router.post('/', authMiddleware, async (req, res) => {
     try {
-        const newJob = new Job(req.body);
+        const { title, description, category, skills, budget, deliveryDays, location } = req.body;
+        
+        // 1. Convert budget from Naira to Kobo (MongoDB expects numbers)
+        const budgetInKobo = Math.round(parseFloat(budget) * 100);
+
+        // 2. Convert the skills string "Figma, UI/UX" into a proper Array ["Figma", "UI/UX"]
+        let skillsArray = skills;
+        if (typeof skills === 'string') {
+            skillsArray = skills.split(',').map(skill => skill.trim()).filter(Boolean);
+        }
+
+        // 3. Build the Job Object
+        const newJob = new Job({
+            title: title, 
+            description: description, 
+            category: category, 
+            skills: skillsArray,
+            budget: budgetInKobo, 
+            deliveryDays: deliveryDays, 
+            location: location || "Remote",
+            postedBy: req.user.id, // <-- CRUCIAL: This assigns the job to the logged-in client!
+            status: 'open'
+        });
+
+        // 4. Save to Database
         const job = await newJob.save();
-        res.json(job);
+        
+        // 5. Send back proper JSON
+        res.status(201).json({ message: "Job posted successfully!", job });
+        
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
+        // Log the exact error in your VS Code terminal so we can see what went wrong
+        console.error("🚨 JOB CREATION ERROR:", err.message); 
+        
+        // Send a proper JSON error back to the frontend so it doesn't crash on 'S'
+        res.status(500).json({ message: err.message || "Server error posting job." });
     }
 });
 
 // =============================================================================
-// CLAUDE'S NEW ROUTES
 // =============================================================================
 
 router.get("/:id", async (req, res) => {
@@ -83,7 +113,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/:id/apply", authMiddleware, async (req, res) => {
+router.post("/:id/apply", authMiddleware, upload.single('attachment'), async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ message: "Invalid ID." });
     const job = await Job.findById(req.params.id).lean();
@@ -91,8 +121,12 @@ router.post("/:id/apply", authMiddleware, async (req, res) => {
     if (job.postedBy.toString() === req.user.id) return res.status(403).json({ message: "Cannot apply to your own job." });
     if (job.status !== "open") return res.status(400).json({ message: "Job is closed." });
 
+    // Multer allows us to read the text fields from req.body again!
     const { coverLetter, bidAmount, deliveryDays } = req.body;
     const bidAmountInKobo = Math.round(parseFloat(bidAmount) * 100);
+
+    // Grab the Cloudinary URL if a file was uploaded
+    const attachmentUrl = req.file ? req.file.path : null;
 
     const application = await Application.create({
       job: req.params.id,
@@ -100,6 +134,7 @@ router.post("/:id/apply", authMiddleware, async (req, res) => {
       coverLetter,
       bidAmount: bidAmountInKobo,
       deliveryDays,
+      attachmentUrl // Save the file URL
     });
 
     await application.populate("applicant", "name avatarUrl university");

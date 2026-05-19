@@ -14,6 +14,7 @@ const Contract = require("../models/Contract");
 const Transaction = require("../models/Transaction");
 const Job = require("../models/Job");
 const authMiddleware = require("../middleware/authMiddleware");
+const upload = require('../utils/upload');
 
 router.use(authMiddleware);
 
@@ -77,6 +78,30 @@ router.get("/", async (req, res) => {
 // Only accessible to the client or freelancer named in the contract.
 // This is the data source for contract-details.html.
 // =============================================================================
+// @route   POST /api/contracts/:id/submit
+router.post('/:id/submit', authMiddleware, upload.single('workFile'), async (req, res) => {
+    try {
+        const { deliverableNote } = req.body;
+        const submissionUrl = req.file ? req.file.path : null;
+
+        const contract = await Contract.findOneAndUpdate(
+            { _id: req.params.id, freelancer: req.user.id },
+            { 
+                status: 'pending_review', 
+                submissionUrl, 
+                deliverableNote 
+            },
+            { new: true }
+        );
+
+        if (!contract) return res.status(404).json({ message: "Contract not found." });
+
+        res.json({ message: "Work submitted successfully!", contract });
+    } catch (err) {
+        res.status(500).json({ message: "Server error." });
+    }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
