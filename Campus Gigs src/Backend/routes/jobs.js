@@ -100,17 +100,23 @@ router.post('/', authMiddleware, async (req, res) => {
 // =============================================================================
 // =============================================================================
 
-router.get("/:id", async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ message: "Invalid job ID." });
-    const job = await Job.findById(req.params.id).populate("postedBy", "name avatarUrl university bio").lean();
-    if (!job) return res.status(404).json({ message: "Job not found." });
-    
-    const applicationCount = await Application.countDocuments({ job: job._id });
-    res.json({ ...job, applicationCount });
-  } catch (err) {
-    res.status(500).json({ message: "Server error." });
-  }
+// @route   GET /api/jobs/:id
+// @desc    Get single job by ID
+router.get('/:id', async (req, res) => {
+    try {
+        // Use .populate() to magically swap the raw User ID with their actual profile data!
+        const job = await Job.findById(req.params.id)
+            .populate('postedBy', 'name university avatarUrl'); 
+            
+        if (!job) {
+            return res.status(404).json({ message: "Job not found." });
+        }
+        
+        res.json(job);
+    } catch (err) {
+        console.error("Error fetching job details:", err);
+        res.status(500).json({ message: "Server error fetching job." });
+    }
 });
 
 router.post("/:id/apply", authMiddleware, upload.single('attachment'), async (req, res) => {
