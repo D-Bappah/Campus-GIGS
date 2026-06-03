@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -271,7 +271,7 @@
                         <div class="notification-popup" id="notificationPopup">
                             <div class="notification-header">
                                 <h4 class="notif-title">Notifications</h4>
-                                <a href="#" class="mark-read-link">Mark all as read</a>
+                                <a href="#" class="mark-read-link" onclick="markAllNotificationsRead(); return false;">Mark all as read</a>
                             </div>
                             <div class="notification-list">
                                 <!-- Item 1 -->
@@ -312,7 +312,7 @@
                                 </a>
                             </div>
                             <div class="notification-footer">
-                                <a href="#" class="view-all-link">View all notifications</a>
+                                <a href="notifications.html" class="view-all-link">View all notifications</a>
                             </div>
                         </div>
                     </div>
@@ -330,7 +330,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html" onclick="localStorage.removeItem('token'); localStorage.removeItem('userRole')">Log out</a>
                             </li>
                         </ul>
                     </div>
@@ -341,119 +341,98 @@
 
     <div class="container pb-5">
         <a href="work.html" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Back
+            <i class="bi bi-arrow-left"></i> Back to Work
         </a>
+
+        <div id="contract-feedback" class="alert d-none mt-3" role="alert"></div>
 
         <div class="row">
             <div class="col-lg-8">
                 <div class="contract-container">
-                    <h1 class="contract-title">Product Designer</h1>
-
-                    <div class="contract-section">
-                        <h3 class="section-heading">Project</h3>
-                        <div class="section-text">
-                            The Student Designer will create an event website for the Client.<br>
-                            The website will include:
-                            <ul>
-                                <li>Event details (date, time, location)</li>
-                                <li>Schedule or program</li>
-                                <li>Contact information</li>
-                                <li>[Add any extra features agreed upon]</li>
-                            </ul>
-                        </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <h1 class="contract-title mb-0" id="contract-title">
+                            <span class="spinner-border spinner-border-sm text-primary me-2"></span>Loading…
+                        </h1>
+                        <span id="contract-status-badge" class="badge bg-secondary">—</span>
                     </div>
 
                     <div class="contract-section">
-                        <h3 class="section-heading">Requirements</h3>
+                        <h3 class="section-heading">Parties</h3>
                         <div class="section-text">
-                            The Client agrees to:
-                            <ul>
-                                <li>Share all event details (text, images, logos) on time</li>
-                                <li>Provide access to any accounts needed (e.g., hosting, domain)</li>
-                                <li>Respond to questions and give feedback within [X days]</li>
-                                <li>Ensure all content provided is accurate and legally usable</li>
-                            </ul>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <span class="text-muted small">Client</span>
+                                    <div class="fw-semibold" id="contract-client-name">—</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="text-muted small">Freelancer</span>
+                                    <div class="fw-semibold" id="contract-freelancer-name">—</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="contract-section">
-                        <h3 class="section-heading">Responsibility</h3>
+                        <h3 class="section-heading">Payment & Deadline</h3>
                         <div class="section-text">
-                            The Student Designer agrees to:
-                            <ul>
-                                <li>Design and build the website according to the agreed scope</li>
-                                <li>Communicate progress regularly with the Client</li>
-                                <li>Deliver drafts and final work by the agreed timeline</li>
-                                <li>Make up to two rounds of revisions based on Client feedback</li>
-                                <li>Use best efforts to create a functional, user-friendly site</li>
-                                <li>Keep Client information private and secure</li>
-                            </ul>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <span class="text-muted small">Agreed Amount</span>
+                                    <div class="fw-bold fs-5 text-success" id="contract-amount">—</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="text-muted small">Deadline</span>
+                                    <div class="fw-semibold" id="contract-deadline">—</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="contract-section">
-                        <h3 class="section-heading">Payment</h3>
+                        <h3 class="section-heading">Job Description</h3>
+                        <div class="section-text" id="contract-description">—</div>
+                        <div class="mt-2" id="contract-skills"></div>
+                    </div>
+
+                    <!-- Submitted Work — shown when work has been submitted -->
+                    <div class="contract-section d-none" id="submission-section" style="border-left: 4px solid #f59e0b; padding-left: 16px;">
+                        <h3 class="section-heading">
+                            <i class="bi bi-upload text-warning me-1"></i> Submitted Work
+                        </h3>
                         <div class="section-text">
-                            <ul>
-                                <li>Total Fee: <strong>N50,000</strong></li>
-                                <li>Payment Method: To Campus Gig Wallet</li>
-                                <li>Payment is due when the website is finished and approved.</li>
-                            </ul>
+                            <p class="mb-2"><strong>Freelancer's Note:</strong></p>
+                            <p id="submission-note" class="bg-light p-3 rounded">—</p>
+                            <a id="submission-file-link" href="#" target="_blank" class="btn btn-outline-primary btn-sm d-none">
+                                <i class="bi bi-paperclip me-1"></i> View submitted file
+                            </a>
                         </div>
                     </div>
 
-                    <div class="contract-section">
-                        <h3 class="section-heading">Ownership</h3>
-                        <div class="section-text">
-                            <ul>
-                                <li>After full payment, the Client owns the website.</li>
-                                <li>The Student Designer may show the project in their portfolio.</li>
-                            </ul>
-                        </div>
+                    <!-- Action Buttons — injected by contract-details.js based on role + status -->
+                    <div class="contract-section" id="contract-actions">
+                        <div class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary"></div></div>
                     </div>
-
-                    <!-- Signatures -->
-                    <div class="signature-row">
-                        <div class="signature-box">
-                            <div class="signature-label">
-                                <i class="bi bi-bar-chart-steps"></i> Your eSignature
-                            </div>
-                            <div class="signature-area" id="your-sig-area">
-                                <!-- Signature loads here -->
-                            </div>
-                            <div class="signature-actions">
-                                <button class="btn-upload-sig" id="btn-upload-freelancer"
-                                    onclick="openSignatureModal('your')">Upload
-                                    signature</button>
-                            </div>
-                        </div>
-
-                        <div class="signature-box">
-                            <div class="signature-label">
-                                <i class="bi bi-bar-chart-steps"></i> Client eSignature
-                            </div>
-                            <div class="signature-area" id="client-sig-area">
-                                <img src="assets/signature-placeholder.png" alt="Client Signature"
-                                    class="uploaded-sig-img" style="display:none;" id="client-sig-img">
-                                <!-- Placeholder until uploaded -->
-                            </div>
-                            <div class="signature-actions">
-                                <button class="btn-upload-sig" id="btn-upload-client"
-                                    onclick="openSignatureModal('client')">Upload
-                                    signature</button>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
 
-            <!-- Side Panel (Optional/Placeholder for right rail similar to image) -->
             <div class="col-lg-4">
-                <!-- Could have project meta data here if needed, keeping simple for now -->
+                <div class="contract-container" style="background:#f9fafb;">
+                    <h5 class="fw-bold mb-3">Contract Summary</h5>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted small">Status</span>
+                        <span id="contract-status-badge-2" class="fw-semibold">—</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted small">Amount</span>
+                        <span id="contract-amount-2" class="fw-semibold text-success">—</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted small">Deadline</span>
+                        <span id="contract-deadline-2" class="fw-semibold">—</span>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 
     <!-- Footer - same as work.html -->
@@ -500,8 +479,9 @@
 
     <!-- Bootstrap JS -->
     <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <script src="assets/notifications.js"></script>
-    <script src="assets/work.js"></script>
+    <script src="assets/contract-details.js"></script>
 </body>
 
 </html>

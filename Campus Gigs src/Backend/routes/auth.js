@@ -3,8 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { sendOTP } = require('../utils/emailHelper');
 
-// 1. REGISTER (Updated with OTP)
 router.post('/register', async (req, res) => {
     try {
         const { email, studentId, password } = req.body;
@@ -18,25 +18,27 @@ router.post('/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // OTP LOGIC STARTS HERE
         const verificationOtp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
         const newUser = new User({
             email,
             studentId,
             password: hashedPassword,
             isVerified: false,
-            otp: verificationOtp,       // Save the code here
-            otpExpires: otpExpires      // Save the expiration time
+            otp: verificationOtp,
+            otpExpires
         });
 
         await newUser.save();
 
-        // DEV LOG:Haven't set up Nodemailer yet, see the code in your console!
-        console.log(`[AUTH] Verification Code for ${email}: ${verificationOtp}`);
+        try {
+            await sendOTP(email, verificationOtp, 'verification');
+        } catch (emailErr) {
+            console.error('[AUTH] Email send failed:', emailErr.message);
+        }
 
-        res.status(201).json({ message: "Registration successful. Please verify your email.", email: newUser.email });
+        res.status(201).json({ message: "Registration successful. Check your email for the verification code.", email: newUser.email });
 
     } catch (err) {
         console.error("Register Error:", err);
@@ -44,7 +46,47 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// 2. LOGIN
+router.post('/verify-email', async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) return res.status(404).json({ message: "User not found." });
+        if (user.isVerified) return res.json({ message: "Email already verified." });
+        if (user.otp !== otp) return res.status(400).json({ message: "Invalid verification code." });
+        if (user.otpExpires < Date.now()) return res.status(400).json({ message: "Verification code expired. Please request a new one." });
+
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+
+        res.json({ message: "Email verified successfully. You can now log in." });
+    } catch (err) {
+        res.status(500).json({ message: "Server error during verification." });
+    }
+});
+
+router.post('/resend-otp', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) return res.status(404).json({ message: "User not found." });
+        if (user.isVerified) return res.status(400).json({ message: "Email already verified." });
+
+        const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        user.otp = newOtp;
+        user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+        await user.save();
+
+        await sendOTP(email, newOtp, 'verification');
+        res.json({ message: "New verification code sent." });
+    } catch (err) {
+        res.status(500).json({ message: "Server error." });
+    }
+});
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -52,43 +94,43 @@ router.post('/login', async (req, res) => {
 
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-        // ---------------------------------------------------------------------
-        // ROLE RULES (driven purely by the email address)
-        // - Admin: only abdurrahmanabubakar234@gmail.com
-        // - Freelancer: @nileuniverity.edu.ng
-        // - Client: any other domain
-        // ---------------------------------------------------------------------
+        if (!user.isVerified) {
+            return res.status(403).json({
+                message: "Please verify your email before logging in.",
+                needsVerification: true,
+                email: user.email
+            });
+        }
+
         const normalizeEmail = (emailStr) => (emailStr || '').trim().toLowerCase();
         const normalized = normalizeEmail(email);
         const computedRole = (() => {
             if (normalized === 'abdurrahmanabubakar234@gmail.com') return 'admin';
-            if (normalized.endsWith('@nileuniverity.edu.ng')) return 'freelancer';
-            if (normalized.endsWith('@gmail.com')) return 'client';
+            if (normalized.endsWith('@nileuniversity.edu.ng')) return 'freelancer';
+            return 'client';
         })();
 
-        // Persist role so it stays consistent across sessions.
         if (user.role !== computedRole) {
             user.role = computedRole;
             await user.save();
         }
 
-
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET || 'secretKey',
-            { expiresIn: '2h' }
+            { expiresIn: '7d' }
         );
 
-res.json({ 
+        res.json({
             token,
-            user: { 
+            user: {
                 id: user._id,
                 email: user.email,
                 onboardingComplete: user.onboardingComplete || false,
-                role: user.role || computedRole 
+                role: user.role || computedRole
             }
         });
     } catch (err) {
@@ -97,17 +139,15 @@ res.json({
     }
 });
 
-// 3. COMPLETE ONBOARDING
 router.post('/complete-onboarding', async (req, res) => {
     try {
         const { email, onboardingData } = req.body;
         const user = await User.findOne({ email });
-        
+
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (onboardingData) {
             const { personal, academic, services, profile } = onboardingData;
-
             if (personal) {
                 user.firstName = personal.firstName;
                 user.lastName = personal.lastName;
@@ -132,10 +172,7 @@ router.post('/complete-onboarding', async (req, res) => {
             }
         }
 
-        // Set the completion flag
-        user.onboardingComplete = true; 
-
-        // Save everything ONCE and send ONE response
+        user.onboardingComplete = true;
         await user.save();
         res.json({ message: "Profile completed successfully!" });
 
@@ -145,7 +182,6 @@ router.post('/complete-onboarding', async (req, res) => {
     }
 });
 
-// 5. FORGOT PASSWORD (Reset Flow)
 router.post('/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -153,21 +189,23 @@ router.post('/forgot-password', async (req, res) => {
 
         if (!user) return res.status(404).json({ message: "Email not found" });
 
-        // Generate 6-digit Reset OTP
         const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-        user.resetPasswordOtp = resetCode; // <--- SAVING TO DB
-        user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+        user.resetPasswordOtp = resetCode;
+        user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
 
-        console.log(`[RESET] OTP for ${email}: ${resetCode}`);
+        try {
+            await sendOTP(email, resetCode, 'reset');
+        } catch (emailErr) {
+            console.error('[AUTH] Reset email failed:', emailErr.message);
+        }
 
         res.json({ message: "Reset code sent to email" });
     } catch (err) {
         res.status(500).json({ message: "Error" });
     }
 });
-// 6. VERIFY PASSWORD RESET OTP
+
 router.post('/verify-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -183,7 +221,6 @@ router.post('/verify-otp', async (req, res) => {
     }
 });
 
-// 7. ACTUAL PASSWORD RESET
 router.post('/reset-password', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -191,11 +228,8 @@ router.post('/reset-password', async (req, res) => {
 
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Hash the new password
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
-
-        // Clear the reset OTPs so they can't be reused
         user.resetPasswordOtp = undefined;
         user.resetPasswordExpires = undefined;
 
@@ -205,4 +239,5 @@ router.post('/reset-password', async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 });
+
 module.exports = router;

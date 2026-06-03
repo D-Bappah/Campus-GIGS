@@ -79,4 +79,30 @@ router.put('/me', auth, async (req, res) => {
     }
 });
 
+// @route   GET /api/users/search?q=...
+// @desc    Find a user by email or display name (for starting a new conversation)
+router.get('/search', auth, async (req, res) => {
+    const q = (req.query.q || '').trim();
+    if (!q || q.length < 3) return res.json([]);
+
+    try {
+        const users = await User.find({
+            _id: { $ne: req.user.id },
+            $or: [
+                { email: { $regex: q, $options: 'i' } },
+                { displayName: { $regex: q, $options: 'i' } },
+                { firstName: { $regex: q, $options: 'i' } },
+                { lastName: { $regex: q, $options: 'i' } }
+            ]
+        }).select('displayName firstName lastName email avatarUrl').limit(8).lean();
+
+        res.json(users.map(u => ({
+            ...u,
+            name: u.displayName || u.firstName || u.email
+        })));
+    } catch (err) {
+        res.status(500).json({ message: 'Search error.' });
+    }
+});
+
 module.exports = router;

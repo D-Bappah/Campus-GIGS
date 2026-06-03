@@ -179,9 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Execute the fetch as soon as the page loads
-    loadUserProfile();
-
     // --- Tab Switching Logic ---
     const tabButtons = document.querySelectorAll('.settings-tab');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -308,23 +305,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Payout Deletion Logic ---
     if (payoutList) {
         payoutList.addEventListener('click', (e) => {
-            // Find closest delete button
             const deleteBtn = e.target.closest('.btn-delete-payout');
             if (deleteBtn) {
                 if (confirm('Are you sure you want to remove this payout account?')) {
                     const item = deleteBtn.closest('.payout-item');
                     const index = item.getAttribute('data-index');
-
-                    // Remove from LS
                     const accounts = JSON.parse(localStorage.getItem('payoutAccounts')) || [];
                     accounts.splice(index, 1);
                     localStorage.setItem('payoutAccounts', JSON.stringify(accounts));
-
-                    // Re-render
                     renderPayoutList();
                 }
             }
         });
     }
+
+    // --- Notification Preferences ---
+    const NOTIF_KEY = 'notificationPrefs';
+    const notifCheckboxIds = ['jobOffers', 'appStatus', 'jobProgress', 'noNotifyMe', 'newMsg', 'msgMention', 'payApproved', 'paySent', 'payoutCompleted'];
+
+    const loadNotifPrefs = () => {
+        const saved = JSON.parse(localStorage.getItem(NOTIF_KEY)) || {};
+        notifCheckboxIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = saved[id] ?? false;
+        });
+    };
+
+    const saveNotifPrefs = () => {
+        const prefs = {};
+        notifCheckboxIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) prefs[id] = el.checked;
+        });
+        localStorage.setItem(NOTIF_KEY, JSON.stringify(prefs));
+    };
+
+    loadNotifPrefs();
+    notifCheckboxIds.forEach(id => {
+        document.getElementById(id)?.addEventListener('change', saveNotifPrefs);
+    });
 
 });

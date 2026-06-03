@@ -1,123 +1,103 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const inputs = document.querySelectorAll('.otp-input');
-  const form = document.getElementById('verifyForm');
-  const timerEl = document.getElementById('timer');
-  const resendBtn = document.getElementById('resendBtn');
-  let timeLeft = 60;
-
-  // Auto-focus and navigation logic
-  inputs.forEach((input, i) => {
-    input.addEventListener('input', (e) => {
-      if (e.target.value && i < inputs.length - 1) inputs[i + 1].focus();
-    });
-
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
-    });
-
-    input.addEventListener('keypress', (e) => !/[0-9]/.test(e.key) && e.preventDefault());
-  });
-
-  // verify-script.js
-document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve the email stored by your Sign-up-script.js
-    // Note: Your script uses localStorage key 'demoUser' in fallback, 
-    // but typically you should use sessionStorage.getItem('userEmail') if you added that.
-    // Let's assume you store the email in sessionStorage in the success block of Sign-up-script.js
-    
-    // ACTION REQUIRED: Go to your Sign-up-script.js and add this line inside the "if (response.ok)" block:
-    // sessionStorage.setItem('pendingEmail', email);
-
-    const email = sessionStorage.getItem('pendingEmail');
+    const API = 'http://localhost:5000/api/auth';
     const inputs = document.querySelectorAll('.otp-input');
-    const button = document.querySelector('button[type="submit"]');
+    const form = document.getElementById('verifyForm');
+    const timerEl = document.getElementById('timer');
+    const resendBtn = document.getElementById('resendBtn');
 
-    button.addEventListener('click', async (e) => {
+    const email = sessionStorage.getItem('pendingEmail') || sessionStorage.getItem('resetEmail');
+    const isResetFlow = !!sessionStorage.getItem('resetEmail');
+
+    if (!email) {
+        alert('Session expired. Please sign up again.');
+        window.location.href = 'SIgn up.html';
+        return;
+    }
+
+    // Auto-advance and backspace logic
+    inputs.forEach((input, i) => {
+        input.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            if (e.target.value && i < inputs.length - 1) inputs[i + 1].focus();
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
+        });
+    });
+
+    // Resend timer
+    let timeLeft = 60;
+    const startTimer = () => {
+        timeLeft = 60;
+        resendBtn.classList.add('disabled');
+        resendBtn.style.pointerEvents = 'none';
+        const interval = setInterval(() => {
+            timerEl.textContent = --timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                resendBtn.classList.remove('disabled');
+                resendBtn.style.pointerEvents = 'auto';
+            }
+        }, 1000);
+    };
+    startTimer();
+
+    resendBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        
-        // Combine inputs
-        let otp = '';
-        inputs.forEach(input => otp += input.value);
+        if (resendBtn.classList.contains('disabled')) return;
 
         try {
-            const res = await fetch('http://localhost:5000/api/auth/verify-account', {
+            const endpoint = isResetFlow ? '/forgot-password' : '/resend-otp';
+            const res = await fetch(`${API}${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            alert(data.message || 'New code sent.');
+            inputs.forEach(i => i.value = '');
+            inputs[0].focus();
+            startTimer();
+        } catch {
+            alert('Failed to resend. Check your connection.');
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const otp = Array.from(inputs).map(i => i.value).join('');
+        if (otp.length !== 6) return alert('Enter the full 6-digit code.');
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Verifying...';
+
+        try {
+            const endpoint = isResetFlow ? '/verify-otp' : '/verify-email';
+            const res = await fetch(`${API}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp })
             });
-
             const data = await res.json();
 
             if (res.ok) {
-                alert("Account Verified! Please Login.");
-                window.location.href = 'login.html';
+                if (isResetFlow) {
+                    window.location.href = 'password-reset.html';
+                } else {
+                    sessionStorage.removeItem('pendingEmail');
+                    alert('Email verified! You can now log in.');
+                    window.location.href = 'login.html';
+                }
             } else {
-                alert(data.message);
+                alert(data.message || 'Verification failed.');
             }
-        } catch (err) {
-            alert("Connection failed");
+        } catch {
+            alert('Connection failed. Is the server running?');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Continue';
         }
     });
-});
-
-  // Timer logic
-  const startTimer = () => {
-    timeLeft = 60;
-    resendBtn.classList.add('disabled');
-    resendBtn.style.pointerEvents = 'none';
-
-    const interval = setInterval(() => {
-      timerEl.textContent = --timeLeft;
-      if (timeLeft <= 0) {
-        clearInterval(interval);
-        resendBtn.classList.remove('disabled');
-        resendBtn.style.pointerEvents = 'auto';
-      }
-    }, 1000);
-  };
-
-  resendBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (resendBtn.classList.contains('disabled')) return;
-
-    alert('OTP resent!');
-    inputs.forEach(inpt => inpt.value = '');
-    inputs[0].focus();
-    startTimer();
-  });
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const otp = Array.from(inputs).map(i => i.value).join('');
-
-    if (otp.length !== 6) return alert('Enter full 6-digit code');
-
-    const isReset = sessionStorage.getItem('resetFlow') === 'true';
-    if (!isReset) alert('Account Verified!');
-    window.location.href = isReset ? 'password-reset.html' : 'login.html';
-  });
-
-  startTimer();
-
-const otpInputs = document.querySelectorAll('.otp-input');
-const email = sessionStorage.getItem('resetEmail');
-
-// When user clicks "Continue"
-async function verifyOtp() {
-    // Combine the 6 inputs into one string
-    let otp = '';
-    otpInputs.forEach(input => otp += input.value);
-
-    const res = await fetch('http://localhost:5000/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp })
-    });
-
-    if (res.ok) {
-        window.location.href = 'password-reset.html';
-    } else {
-        alert("Invalid Code");
-    }
-}
 });

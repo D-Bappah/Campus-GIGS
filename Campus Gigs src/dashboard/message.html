@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -485,7 +485,7 @@
                         <div class="notification-popup" id="notificationPopup">
                             <div class="notification-header">
                                 <h4 class="notif-title">Notifications</h4>
-                                <a href="#" class="mark-read-link">Mark all as read</a>
+                                <a href="#" class="mark-read-link" onclick="markAllNotificationsRead(); return false;">Mark all as read</a>
                             </div>
                             <div class="notification-list">
                                 <!-- Item 1 -->
@@ -544,7 +544,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html" onclick="localStorage.removeItem('token'); localStorage.removeItem('userRole')">Log out</a>
                             </li>
                         </ul>
                     </div>
@@ -562,7 +562,12 @@
 
         <div class="message-sidebar">
             <div class="sidebar-header">
-                <h1 class="sidebar-title">Messages</h1>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h1 class="sidebar-title mb-0">Messages</h1>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newChatModal" title="Start new conversation">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                </div>
                 <div class="search-box">
                     <i class="bi bi-search search-icon"></i>
                     <input type="text" class="search-input" placeholder="Search">
@@ -695,9 +700,9 @@
                 <img src="../Login and authentification/assets/logo.png" alt="Campus Gigs">
             </div>
             <div class="footer-links">
-                <a href="#" class="footer-link">How It Works</a>
-                <a href="#" class="footer-link">Browse Jobs</a>
-                <a href="#" class="footer-link">Resources</a>
+                <a href="../landing page/Home.html#how-it-works" class="footer-link">How It Works</a>
+                <a href="browse-jobs.html" class="footer-link">Browse Jobs</a>
+                <a href="help.html" class="footer-link">Resources</a>
             </div>
             <div class="footer-social">
                 <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
@@ -707,12 +712,64 @@
         </div>
     </footer>
 
+    <!-- New Conversation Modal -->
+    <div class="modal fade" id="newChatModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Start a Conversation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <p class="text-muted small mb-3">Search by name or email to message anyone on Campus Gigs.</p>
+                    <input type="text" id="user-search-input" class="form-control" placeholder="Type a name or email…" autocomplete="off">
+                    <div id="user-search-results" class="mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Socket.io client -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <!-- Message Logic -->
     <script src="assets/message.js"></script>
     <script src="assets/notifications.js"></script>
+    <script>
+        const searchInput = document.getElementById('user-search-input');
+        const searchResults = document.getElementById('user-search-results');
+        let searchTimer;
+        searchInput?.addEventListener('input', () => {
+            clearTimeout(searchTimer);
+            const q = searchInput.value.trim();
+            if (q.length < 3) { searchResults.innerHTML = ''; return; }
+            searchTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`http://localhost:5000/api/users/search?q=${encodeURIComponent(q)}`, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    });
+                    const users = await res.json();
+                    if (!users.length) { searchResults.innerHTML = '<p class="text-muted small p-2">No users found.</p>'; return; }
+                    searchResults.innerHTML = users.map(u => `
+                        <div class="d-flex align-items-center gap-2 p-2 rounded" style="cursor:pointer;"
+                             onclick="window.startChatWith('${u._id}')">
+                            <img src="${u.avatarUrl || 'assets/images/default-avatar.png'}"
+                                 class="rounded-circle" width="36" height="36" style="object-fit:cover;">
+                            <div>
+                                <div class="fw-semibold" style="font-size:14px;">${u.name}</div>
+                                <div class="text-muted" style="font-size:12px;">${u.email}</div>
+                            </div>
+                        </div>`).join('');
+                } catch { searchResults.innerHTML = '<p class="text-danger small p-2">Search failed.</p>'; }
+            }, 350);
+        });
+        window.startChatWith = (userId) => {
+            bootstrap.Modal.getInstance(document.getElementById('newChatModal'))?.hide();
+            openConversation(userId);
+        };
+    </script>
 
 </body>
 

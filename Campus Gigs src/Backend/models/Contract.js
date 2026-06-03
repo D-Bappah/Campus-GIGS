@@ -70,8 +70,8 @@ const ContractSchema = new mongoose.Schema(
     // -------------------------------------------------------------------------
     status: {
       type: String,
-      enum: ["active", "pending_review", "completed", "disputed", "cancelled"],
-      default: "active",
+      enum: ["pending_payment", "active", "pending_review", "completed", "disputed", "cancelled"],
+      default: "pending_payment",
       index: true,
     },
 

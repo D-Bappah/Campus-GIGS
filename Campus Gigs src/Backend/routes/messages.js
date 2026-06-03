@@ -3,20 +3,22 @@ const router = express.Router();
 const Message = require('../models/Message');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/authMiddleware');
+const socketUtil = require('../utils/socket');
+const notify = require('../utils/notificationHelper');
 
-// @route   GET /api/messages/conversations
-// @desc    Get the sidebar list of all active chats
 router.get('/conversations', authMiddleware, async (req, res) => {
     try {
         const messages = await Message.find({
             $or: [{ sender: req.user.id }, { receiver: req.user.id }]
-        }).sort({ createdAt: -1 }).populate('sender receiver', 'name avatarUrl university');
+        }).sort({ createdAt: -1 }).populate('sender receiver', 'displayName firstName lastName avatarUrl university');
 
         const conversationsMap = new Map();
-        
+
         messages.forEach(msg => {
-            const partnerId = msg.sender._id.toString() === req.user.id ? msg.receiver._id.toString() : msg.sender._id.toString();
-            
+            const partnerId = msg.sender._id.toString() === req.user.id
+                ? msg.receiver._id.toString()
+                : msg.sender._id.toString();
+
             if (!conversationsMap.has(partnerId)) {
                 conversationsMap.set(partnerId, {
                     senderProfile: msg.sender,
@@ -38,20 +40,17 @@ router.get('/conversations', authMiddleware, async (req, res) => {
     }
 });
 
-// @route   GET /api/messages/:otherUserId
-// @desc    Get full message history for a specific chat
 router.get('/:otherUserId', authMiddleware, async (req, res) => {
     try {
-        const otherUser = await User.findById(req.params.otherUserId).select('name avatarUrl university');
-        
+        const otherUser = await User.findById(req.params.otherUserId).select('displayName firstName lastName avatarUrl university');
+
         const messages = await Message.find({
             $or: [
                 { sender: req.user.id, receiver: req.params.otherUserId },
                 { sender: req.params.otherUserId, receiver: req.user.id }
             ]
-        }).sort({ createdAt: 1 }).populate('sender', 'name avatarUrl');
+        }).sort({ createdAt: 1 }).populate('sender', 'displayName firstName lastName avatarUrl');
 
-        // Mark messages as read when opened
         await Message.updateMany(
             { sender: req.params.otherUserId, receiver: req.user.id, read: false },
             { $set: { read: true } }
@@ -63,13 +62,11 @@ router.get('/:otherUserId', authMiddleware, async (req, res) => {
     }
 });
 
-// @route   POST /api/messages/:otherUserId
-// @desc    Send a new message
 router.post('/:otherUserId', authMiddleware, async (req, res) => {
     try {
         const { text } = req.body;
         const convId = [req.user.id, req.params.otherUserId].sort().join("_");
-        
+
         const newMessage = await Message.create({
             conversationId: convId,
             sender: req.user.id,
@@ -77,6 +74,17 @@ router.post('/:otherUserId', authMiddleware, async (req, res) => {
             text,
             read: false
         });
+
+        await newMessage.populate('sender', 'displayName firstName lastName avatarUrl');
+
+        // Emit to the conversation room so both parties get it instantly
+        const io = socketUtil.get();
+        io?.to(convId).emit('new_message', newMessage);
+
+        // Notify receiver if they're not in the socket room (offline fallback)
+        const sender = await User.findById(req.user.id).select('firstName lastName displayName');
+        const senderName = sender?.displayName || sender?.firstName || 'Someone';
+        notify.newMessage(req.params.otherUserId, senderName);
 
         res.status(201).json(newMessage);
     } catch (err) {

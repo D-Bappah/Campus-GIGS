@@ -158,14 +158,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
+    const hasToken = !!localStorage.getItem('token');
+    // Treat any logged-in user as "registered" even without the query param
+    const isRegistered = urlParams.get('mode') === 'registered' || hasToken;
 
     const publicHeader = document.getElementById('publicHeader');
     const dashboardHeader = document.getElementById('dashboardHeader');
     const guestSidebar = document.getElementById('guestSidebar');
     const registeredSidebar = document.getElementById('registeredSidebar');
 
-    if (mode === 'registered') {
+    if (isRegistered) {
         if (publicHeader) publicHeader.style.display = 'none';
         if (dashboardHeader) dashboardHeader.style.display = 'block';
         if (guestSidebar) guestSidebar.style.display = 'none';
@@ -235,11 +237,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 window.handleApplyClick = function (jobId) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-
-    if (mode === 'registered') {
-        window.location.href = `job-details.html?id=${jobId}&mode=registered`;
+    const token = localStorage.getItem('token');
+    if (token) {
+        window.location.href = `job-details.html?id=${jobId}`;
     } else {
         window.location.href = '../Login and authentification/login.html';
     }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -448,7 +448,7 @@
                         <div class="notification-popup" id="notificationPopup">
                             <div class="notification-header">
                                 <h4 class="notif-title">Notifications</h4>
-                                <a href="#" class="mark-read-link">Mark all as read</a>
+                                <a href="#" class="mark-read-link" onclick="markAllNotificationsRead(); return false;">Mark all as read</a>
                             </div>
                             <div class="notification-list">
                                 <!-- Item 1 -->
@@ -489,7 +489,7 @@
                                 </a>
                             </div>
                             <div class="notification-footer">
-                                <a href="#" class="view-all-link">View all notifications</a>
+                                <a href="notifications.html" class="view-all-link">View all notifications</a>
                             </div>
                         </div>
                     </div>
@@ -508,7 +508,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html" onclick="localStorage.removeItem('token'); localStorage.removeItem('userRole')">Log out</a>
                             </li>
                         </ul>
                     </div>
@@ -665,25 +665,21 @@
                         <i class="bi bi-linkedin account-icon"></i>
                         <div>
                             <div class="fw-bold" style="font-size:14px;">LinkedIn</div>
-                            <div class="text-secondary" style="font-size:12px;">Connected. You can sign in using
-                                your
-                                Google account.</div>
+                            <div class="text-secondary" style="font-size:12px;" id="linkedinStatusText">Not connected.</div>
                         </div>
                     </div>
-                    <button class="btn-disconnect">Disconnect</button>
+                    <button class="btn-primary btn-sm" id="btnLinkedinAction" onclick="alert('LinkedIn OAuth coming soon!')">Connect</button>
                 </div>
 
                 <div class="linked-account-item">
                     <div class="account-left">
                         <i class="bi bi-twitter-x account-icon"></i>
                         <div>
-                            <div class="fw-bold" style="font-size:14px;">Twitter</div>
-                            <div class="text-secondary" style="font-size:12px;">Connected. You can sign in using
-                                your
-                                Google account.</div>
+                            <div class="fw-bold" style="font-size:14px;">Twitter / X</div>
+                            <div class="text-secondary" style="font-size:12px;" id="twitterStatusText">Not connected.</div>
                         </div>
                     </div>
-                    <button class="btn-disconnect">Disconnect</button>
+                    <button class="btn-primary btn-sm" id="btnTwitterAction" onclick="alert('Twitter OAuth coming soon!')">Connect</button>
                 </div>
             </div>
 
@@ -820,9 +816,9 @@
             </div>
 
             <div class="footer-links">
-                <a href="#" class="footer-link">How It Works</a>
+                <a href="../landing page/Home.html#how-it-works" class="footer-link">How It Works</a>
                 <a href="browse-jobs.html?mode=registered" class="footer-link">Browse Jobs</a>
-                <a href="#" class="footer-link">Resources</a>
+                <a href="help.html" class="footer-link">Resources</a>
             </div>
 
             <div class="footer-social">

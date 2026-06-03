@@ -4,8 +4,10 @@ const mongoose = require("mongoose");
 const Job = require("../models/Job");
 const Application = require("../models/Application");
 const Contract = require("../models/Contract");
+const Message = require("../models/Message");
 const authMiddleware = require("../middleware/authMiddleware");
 const notify = require("../utils/notificationHelper");
+const socketUtil = require("../utils/socket");
 const upload = require('../utils/upload');
 
 // =============================================================================
@@ -58,6 +60,9 @@ router.get('/', async (req, res) => {
 // @route   POST /api/jobs (Create a job posting)
 router.post('/', authMiddleware, async (req, res) => {
     try {
+        if (req.user.role !== 'client' && req.user.role !== 'admin') {
+            return res.status(403).json({ message: "Only clients can post jobs. Freelancers should apply for existing jobs." });
+        }
         const { title, description, category, skills, budget, deliveryDays, location } = req.body;
         
         // 1. Convert budget from Naira to Kobo (MongoDB expects numbers)
@@ -106,7 +111,7 @@ router.get('/:id', async (req, res) => {
     try {
         // Use .populate() to magically swap the raw User ID with their actual profile data!
         const job = await Job.findById(req.params.id)
-            .populate('postedBy', 'name university avatarUrl'); 
+            .populate('postedBy', 'displayName firstName lastName university avatarUrl'); 
             
         if (!job) {
             return res.status(404).json({ message: "Job not found." });
@@ -121,6 +126,9 @@ router.get('/:id', async (req, res) => {
 
 router.post("/:id/apply", authMiddleware, upload.single('attachment'), async (req, res) => {
   try {
+    if (req.user.role !== 'freelancer') {
+      return res.status(403).json({ message: "Only Nile University students (@nileuniversity.edu.ng) can apply for jobs." });
+    }
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ message: "Invalid ID." });
     const job = await Job.findById(req.params.id).lean();
     if (!job) return res.status(404).json({ message: "Job not found." });
@@ -144,7 +152,24 @@ router.post("/:id/apply", authMiddleware, upload.single('attachment'), async (re
     });
 
     await application.populate("applicant", "name avatarUrl university");
+
+    // Notify job poster
     notify.newApplication(job.postedBy, job, application);
+
+    // Send an automatic message from applicant to job poster
+    const clientId = job.postedBy.toString();
+    const freelancerId = req.user.id;
+    const convId = [freelancerId, clientId].sort().join("_");
+    const autoMessage = await Message.create({
+        conversationId: convId,
+        sender: freelancerId,
+        receiver: clientId,
+        text: `Hi! I've submitted a proposal for your job "${job.title}". Please check it out!`,
+        read: false
+    });
+    await autoMessage.populate('sender', 'name avatarUrl');
+    const io = socketUtil.get();
+    io?.to(convId).emit('new_message', autoMessage);
 
     res.status(201).json({ message: "Application submitted!", application });
   } catch (err) {
@@ -160,7 +185,7 @@ router.get("/:id/applications", authMiddleware, async (req, res) => {
     if (job.postedBy.toString() !== req.user.id) return res.status(403).json({ message: "Access denied." });
 
     const applications = await Application.find({ job: req.params.id })
-      .populate("applicant", "name avatarUrl university rating completedJobs")
+      .populate("applicant", "displayName firstName lastName avatarUrl university")
       .sort({ createdAt: -1 }).lean();
 
     res.json({ applications, total: applications.length });
@@ -183,6 +208,8 @@ router.put("/:id/applications/:appId", authMiddleware, async (req, res) => {
     application.status = status;
     await application.save();
 
+    let contract = null;
+
     if (status === "accepted") {
       await Application.updateMany(
         { job: req.params.id, _id: { $ne: req.params.appId }, status: "pending" },
@@ -195,18 +222,21 @@ router.put("/:id/applications/:appId", authMiddleware, async (req, res) => {
       const deadline = new Date();
       deadline.setDate(deadline.getDate() + application.deliveryDays);
 
-      const contract = await Contract.create({
+      contract = await Contract.create({
         job: job._id, application: application._id, client: req.user.id,
         freelancer: application.applicant, agreedAmount: application.bidAmount, deadline,
       });
 
       notify.applicationAccepted(application.applicant, job, contract);
-      notify.contractCreated(req.user.id, application.applicant, contract, job);
     } else {
       notify.applicationRejected(application.applicant, job);
     }
 
-    res.json({ message: `Application ${status}.`, application });
+    res.json({
+      message: `Application ${status}.`,
+      application: { ...application.toObject(), contractId: contract?._id },
+      contract
+    });
   } catch (err) {
     res.status(500).json({ message: "Server error." });
   }

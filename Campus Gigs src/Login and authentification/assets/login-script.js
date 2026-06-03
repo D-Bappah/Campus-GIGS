@@ -75,8 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     window.location.href = '../dashboard/dashboard.html';
                 }
+            } else if (data.needsVerification) {
+                sessionStorage.setItem('pendingEmail', data.email);
+                alert('Please verify your email first. A code was sent when you signed up.');
+                window.location.href = 'verify.html';
             } else {
-                // Show error if password/email is wrong
                 alert(data.message || "Invalid credentials.");
             }
         } catch (err) {

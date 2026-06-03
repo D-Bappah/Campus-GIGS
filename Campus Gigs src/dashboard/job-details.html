@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -174,6 +174,17 @@
             background-color: #9ca3af;
             cursor: not-allowed;
         }
+
+        .proposal-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: box-shadow .15s; }
+        .proposal-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+        .proposal-card.accepted { border-color: #10b981; background: #f0fdf4; }
+        .proposal-card.rejected { opacity: .55; }
+        .btn-accept { background: #10b981; color: #fff; border: none; border-radius: 8px; padding: 8px 20px; font-weight: 600; font-size: 14px; }
+        .btn-accept:hover { background: #059669; }
+        .btn-accept:disabled { background: #9ca3af; cursor: not-allowed; }
+        .btn-reject { background: #fff; color: #ef4444; border: 1px solid #ef4444; border-radius: 8px; padding: 8px 20px; font-weight: 600; font-size: 14px; }
+        .btn-reject:hover { background: #fef2f2; }
+        .btn-reject:disabled { opacity: .5; cursor: not-allowed; }
 
         /* Similar Jobs */
         .similar-section {
@@ -363,7 +374,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="login.html" onclick="localStorage.removeItem('token')">Log out</a>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html" onclick="localStorage.removeItem('token'); localStorage.removeItem('userRole')">Log out</a>
                             </li>
                         </ul>
                     </div>
@@ -431,14 +442,31 @@
                         </div>
                     </div>
 
-                    <!-- Action -->
-                    <div class="d-flex gap-3">
+                    <!-- Action (shown to freelancers / non-owners) -->
+                    <div class="d-flex flex-wrap gap-2" id="freelancer-actions">
                         <button class="apply-btn" id="apply-btn">Apply for this position</button>
-                        
-                        <button class="apply-btn" id="submit-task-btn" style="background-color: #111827;" 
-                            onmouseover="this.style.backgroundColor='#1f2937'" 
-                            onmouseout="this.style.backgroundColor='#111827'" 
+                        <button class="apply-btn" id="submit-task-btn" style="background-color: #111827;"
+                            onmouseover="this.style.backgroundColor='#1f2937'"
+                            onmouseout="this.style.backgroundColor='#111827'"
                             onclick="window.location.href='work.html'">View Workspace</button>
+                        <button class="apply-btn" id="message-poster-btn" style="background-color:#6b7280;display:none;"
+                            onmouseover="this.style.backgroundColor='#4b5563'"
+                            onmouseout="this.style.backgroundColor='#6b7280'">
+                            <i class="bi bi-chat me-1"></i> Message Poster
+                        </button>
+                    </div>
+
+                    <!-- Toast feedback -->
+                    <div id="feedback-toast" class="alert mt-3 d-none" role="alert"></div>
+
+                    <!-- Proposals section (shown to job owner only) -->
+                    <div id="proposals-section" class="d-none mt-5">
+                        <h3 class="section-title">Proposals <span id="proposal-count" class="badge bg-secondary ms-1">0</span></h3>
+                        <div id="proposals-list">
+                            <div class="text-center py-4 text-muted">
+                                <div class="spinner-border spinner-border-sm" role="status"></div> Loading proposals…
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -502,9 +530,9 @@
                 <span class="fs-4">🎓</span> <span class="fw-bold fs-5">Campus Gigs</span>
             </div>
             <div class="footer-links">
-                <a href="#" class="footer-link">How It Works</a>
+                <a href="../landing page/Home.html#how-it-works" class="footer-link">How It Works</a>
                 <a href="browse-jobs.html" class="footer-link">Browse Jobs</a>
-                <a href="#" class="footer-link">Resources</a>
+                <a href="help.html" class="footer-link">Resources</a>
             </div>
             <div class="footer-social">
                 <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
@@ -515,7 +543,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <script src="assets/notifications.js" defer></script>
     <script src="assets/job-details.js" defer></script>
 

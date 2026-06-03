@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -359,7 +359,7 @@
                         <div class="notification-popup" id="notificationPopup">
                             <div class="notification-header">
                                 <h4 class="notif-title">Notifications</h4>
-                                <a href="#" class="mark-read-link">Mark all as read</a>
+                                <a href="#" class="mark-read-link" onclick="markAllNotificationsRead(); return false;">Mark all as read</a>
                             </div>
                             <div class="notification-list">
                                 <!-- Item 1 -->
@@ -418,7 +418,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="../Login and authentification/login.html">Log out</a>
+                            <li><a class="dropdown-item" href="../Login and authentification/login.html" onclick="localStorage.removeItem('token'); localStorage.removeItem('userRole')">Log out</a>
                             </li>
                         </ul>
                     </div>
@@ -427,10 +427,15 @@
         </div>
     </nav>
 
-    <!-- Sub Navigation -->
+    <!-- Tab Navigation — shows both views for any user -->
     <div class="container">
-        <div class="sub-nav">
-            <a href="#" class="sub-nav-item active">Contracts</a>
+        <div class="sub-nav d-flex gap-3">
+            <a href="#" class="sub-nav-item active" id="tab-applications" onclick="switchWorkTab('applications'); return false;">
+                <i class="bi bi-send me-1"></i> My Proposals
+            </a>
+            <a href="#" class="sub-nav-item" id="tab-contracts" onclick="switchWorkTab('contracts'); return false;">
+                <i class="bi bi-briefcase me-1"></i> My Posted Jobs
+            </a>
         </div>
     </div>
 
@@ -441,7 +446,9 @@
                 <nav class="d-flex flex-column" id="filter-sidebar">
                     <a href="#" class="sidebar-link active" onclick="filterWork('all'); return false;">All</a>
                     <a href="#" class="sidebar-link" onclick="filterWork('pending'); return false;">Pending</a>
-                    <a href="#" class="sidebar-link" onclick="filterWork('accepted'); return false;">Completed / Hired</a>
+                    <a href="#" class="sidebar-link" onclick="filterWork('active'); return false;">Active</a>
+                    <a href="#" class="sidebar-link" onclick="filterWork('pending_review'); return false;">Under Review</a>
+                    <a href="#" class="sidebar-link" onclick="filterWork('completed'); return false;">Completed</a>
                     <a href="#" class="sidebar-link" onclick="filterWork('rejected'); return false;">Declined</a>
                 </nav>
             </div>
@@ -450,7 +457,7 @@
                 <div id="work-container" class="row g-4">
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary mb-3"></div>
-                        <p>Loading your work history...</p>
+                        <p>Loading...</p>
                     </div>
                 </div>
             </div>
@@ -464,9 +471,9 @@
             </div>
 
             <div class="footer-links">
-                <a href="#" class="footer-link">How It Works</a>
+                <a href="../landing page/Home.html#how-it-works" class="footer-link">How It Works</a>
                 <a href="browse-jobs.html?mode=registered" class="footer-link">Browse Jobs</a>
-                <a href="#" class="footer-link">Resources</a>
+                <a href="help.html" class="footer-link">Resources</a>
             </div>
 
             <div class="footer-social">

@@ -380,42 +380,26 @@ async function handleWithdrawSubmit(event) {
   const submitBtn = document.getElementById("withdraw-submit-btn");
 
   // Read form values — using .trim() to strip accidental whitespace
-  const amountNaira = parseFloat(
-    document.getElementById("withdraw-amount")?.value || "0"
-  );
-  const bankName = document.getElementById("withdraw-bank-name")?.value.trim();
-  const accountNumber = document
-    .getElementById("withdraw-account-number")
-    ?.value.trim();
-  const accountName = document
-    .getElementById("withdraw-account-name")
-    ?.value.trim();
+  const amountNaira = parseFloat(document.getElementById("withdraw-amount")?.value || "0");
 
-  // -------------------------------------------------------------------------
-  // Client-side validation — catch obvious errors before hitting the network.
-  // The server validates too (defence in depth), but client validation gives
-  // instant feedback and saves a round-trip.
-  // -------------------------------------------------------------------------
+  const bankSelect = document.getElementById("withdraw-bank-select");
+  const bankCode = bankSelect?.value;
+  const bankName = bankSelect?.options[bankSelect.selectedIndex]?.dataset.name || bankSelect?.options[bankSelect.selectedIndex]?.text || '';
+
+  const accountNumber = document.getElementById("withdraw-account-number")?.value.trim();
+  const accountName = document.getElementById("withdraw-account-name")?.value.trim();
+
   if (!amountNaira || amountNaira < 500) {
-    return showMessage(
-      "wallet-error-msg",
-      "Minimum withdrawal is ₦500.",
-      true
-    );
+    return showMessage("wallet-error-msg", "Minimum withdrawal is ₦500.", true);
   }
-  if (!bankName || !accountNumber || !accountName) {
-    return showMessage(
-      "wallet-error-msg",
-      "Please fill in all bank details.",
-      true
-    );
+  if (!bankCode) {
+    return showMessage("wallet-error-msg", "Please select a bank.", true);
+  }
+  if (!accountNumber || !accountName) {
+    return showMessage("wallet-error-msg", "Please fill in and verify your account details.", true);
   }
   if (!/^\d{10}$/.test(accountNumber)) {
-    return showMessage(
-      "wallet-error-msg",
-      "Account number must be exactly 10 digits.",
-      true
-    );
+    return showMessage("wallet-error-msg", "Account number must be exactly 10 digits.", true);
   }
 
   // Convert Naira to kobo before sending to the API.
@@ -437,6 +421,7 @@ async function handleWithdrawSubmit(event) {
       body: JSON.stringify({
         amount: amountInKobo,
         bankName,
+        bankCode,
         accountNumber,
         accountName,
       }),
@@ -485,26 +470,87 @@ async function handleWithdrawSubmit(event) {
 // We do NOT use inline onXxx attributes in the HTML (except for the dynamic
 // renderTransactions rows) because it couples markup to JS behaviour.
 // =============================================================================
+async function loadBankList() {
+  const select = document.getElementById("withdraw-bank-select");
+  if (!select) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/wallet/banks`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error();
+    const banks = await res.json();
+
+    select.innerHTML = '<option value="">Select your bank…</option>' +
+      banks.map(b => `<option value="${b.code}" data-name="${b.name}">${b.name}</option>`).join('');
+  } catch {
+    select.innerHTML = '<option value="">Failed to load banks — try refreshing</option>';
+  }
+}
+
+async function resolveAccount() {
+  const select = document.getElementById("withdraw-bank-select");
+  const accountInput = document.getElementById("withdraw-account-number");
+  const nameInput = document.getElementById("withdraw-account-name");
+  const statusEl = document.getElementById("account-resolve-status");
+  const btn = document.getElementById("resolve-account-btn");
+
+  const bankCode = select?.value;
+  const accountNumber = accountInput?.value.trim();
+
+  if (!bankCode) return showMessage("wallet-error-msg", "Please select a bank first.", true);
+  if (!/^\d{10}$/.test(accountNumber)) return showMessage("wallet-error-msg", "Account number must be 10 digits.", true);
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+  if (statusEl) statusEl.textContent = "Verifying…";
+
+  try {
+    const res = await fetch(`${API_BASE}/wallet/resolve-account`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ accountNumber, bankCode })
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Could not verify account.");
+
+    if (nameInput) {
+      nameInput.value = data.account_name;
+      nameInput.readOnly = true;
+    }
+    if (statusEl) {
+      statusEl.textContent = `✓ Verified: ${data.account_name}`;
+      statusEl.className = "form-text text-success";
+    }
+  } catch (err) {
+    if (statusEl) {
+      statusEl.textContent = err.message;
+      statusEl.className = "form-text text-danger";
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-check-circle"></i> Verify';
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  // -------------------------------------------------------------------------
-  // Guard: if there's no token in localStorage at all, don't even attempt
-  // to load data — redirect straight to login. This prevents a flash of the
-  // payment page before the 401 response comes back from the server.
-  // -------------------------------------------------------------------------
   if (!localStorage.getItem("token")) {
     window.location.href = "login.html";
     return;
   }
 
-  // Initial data load
   loadWalletData(1);
+  loadBankList();
 
-  // Wire up the withdrawal form submission
-  document
-    .getElementById("withdraw-form")
-    ?.addEventListener("submit", handleWithdrawSubmit);
+  document.getElementById("withdraw-form")?.addEventListener("submit", handleWithdrawSubmit);
+  document.getElementById("resolve-account-btn")?.addEventListener("click", resolveAccount);
 
-  // Wire up pagination buttons
+  // Auto-resolve when account number becomes 10 digits and a bank is selected
+  document.getElementById("withdraw-account-number")?.addEventListener("input", (e) => {
+    if (e.target.value.length === 10 && document.getElementById("withdraw-bank-select")?.value) {
+      resolveAccount();
+    }
+  });
+
   document.getElementById("pagination-prev")?.addEventListener("click", () => {
     if (state.currentPage > 1) loadWalletData(state.currentPage - 1);
   });

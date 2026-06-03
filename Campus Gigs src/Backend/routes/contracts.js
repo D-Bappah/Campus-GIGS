@@ -13,7 +13,10 @@ const mongoose = require("mongoose");
 const Contract = require("../models/Contract");
 const Transaction = require("../models/Transaction");
 const Job = require("../models/Job");
+const Message = require("../models/Message");
 const authMiddleware = require("../middleware/authMiddleware");
+const notify = require("../utils/notificationHelper");
+const socketUtil = require("../utils/socket");
 const upload = require('../utils/upload');
 
 router.use(authMiddleware);
@@ -78,6 +81,77 @@ router.get("/", async (req, res) => {
 // Only accessible to the client or freelancer named in the contract.
 // This is the data source for contract-details.html.
 // =============================================================================
+// @route   GET /api/contracts/:id/payment-info
+// Returns Paystack public key + contract amount for the inline payment widget.
+router.get('/:id/payment-info', authMiddleware, async (req, res) => {
+    try {
+        const contract = await Contract.findOne({ _id: req.params.id, client: req.user.id });
+        if (!contract) return res.status(404).json({ message: "Contract not found." });
+
+        const user = await require('../models/User').findById(req.user.id).select('email');
+        res.json({
+            publicKey: process.env.PAYSTACK_PUBLIC_KEY,
+            amount: contract.agreedAmount,
+            email: user.email,
+            reference: `escrow_${req.params.id}_${Date.now()}`
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Server error." });
+    }
+});
+
+// @route   POST /api/contracts/:id/fund
+// Verifies a Paystack reference then locks funds in escrow and activates the contract.
+router.post('/:id/fund', authMiddleware, async (req, res) => {
+    try {
+        const { reference } = req.body;
+        if (!reference) return res.status(400).json({ message: "Payment reference required." });
+
+        const contract = await Contract.findOne({ _id: req.params.id, client: req.user.id });
+        if (!contract) return res.status(404).json({ message: "Contract not found." });
+        if (contract.status !== 'pending_payment') {
+            return res.status(400).json({ message: "Contract is already funded." });
+        }
+
+        // Verify payment with Paystack
+        const axios = require('axios');
+        const verify = await axios.get(
+            `https://api.paystack.co/transaction/verify/${reference}`,
+            { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
+        );
+
+        const txData = verify.data.data;
+        if (txData.status !== 'success') {
+            return res.status(400).json({ message: "Payment not confirmed by Paystack." });
+        }
+        if (txData.amount !== contract.agreedAmount) {
+            return res.status(400).json({ message: "Payment amount does not match contract." });
+        }
+
+        await Transaction.create({
+            user: req.user.id,
+            type: "escrow_in",
+            amount: contract.agreedAmount,
+            currency: "NGN",
+            description: `Escrow funded for contract: ${contract._id}`,
+            status: "completed",
+            reference,
+            relatedContract: contract._id
+        });
+
+        contract.status = 'active';
+        await contract.save();
+
+        const job = await Job.findById(contract.job).select('title');
+        notify.contractCreated(req.user.id, contract.freelancer, contract, job);
+
+        res.json({ message: "Payment confirmed! Contract is now active. The freelancer has been notified.", contract });
+    } catch (err) {
+        console.error('Fund contract error:', err.response?.data || err.message);
+        res.status(500).json({ message: err.response?.data?.message || "Server error verifying payment." });
+    }
+});
+
 // @route   POST /api/contracts/:id/submit
 router.post('/:id/submit', authMiddleware, upload.single('workFile'), async (req, res) => {
     try {
@@ -86,18 +160,33 @@ router.post('/:id/submit', authMiddleware, upload.single('workFile'), async (req
 
         const contract = await Contract.findOneAndUpdate(
             { _id: req.params.id, freelancer: req.user.id },
-            { 
-                status: 'pending_review', 
-                submissionUrl, 
-                deliverableNote 
-            },
+            { status: 'pending_review', submissionUrl, deliverableNote },
             { new: true }
-        );
+        ).populate('job', 'title');
 
         if (!contract) return res.status(404).json({ message: "Contract not found." });
 
         res.json({ message: "Work submitted successfully!", contract });
+
+        // Send message + notification to client (fire-and-forget)
+        try {
+            const convId = [req.user.id, contract.client.toString()].sort().join("_");
+            const autoMsg = await Message.create({
+                conversationId: convId,
+                sender: req.user.id,
+                receiver: contract.client,
+                text: `I've submitted my completed work for "${contract.job?.title || 'our contract'}". Please review it!`,
+                read: false
+            });
+            await autoMsg.populate('sender', 'displayName firstName lastName avatarUrl');
+            const io = socketUtil.get();
+            io?.to(convId).emit('new_message', autoMsg);
+            notify.workSubmitted(contract.client, contract, contract.job);
+        } catch (e) {
+            console.error('Submit notification error:', e.message);
+        }
     } catch (err) {
+        console.error('Submit work error:', err);
         res.status(500).json({ message: "Server error." });
     }
 });
@@ -204,6 +293,11 @@ router.put("/:id/status", async (req, res) => {
           message: "Only the freelancer can submit work for review.",
         });
       }
+      if (currentStatus === "pending_payment") {
+        return res.status(400).json({
+          message: "The client has not funded this contract yet. Work cannot be submitted until payment is confirmed.",
+        });
+      }
       if (currentStatus !== "active") {
         return res.status(400).json({
           message: `Cannot submit for review from status: ${currentStatus}`,
@@ -215,6 +309,22 @@ router.put("/:id/status", async (req, res) => {
         });
       }
       contract.deliverableNote = deliverableNote || contract.deliverableNote;
+
+      // Message the client to notify them work has been submitted
+      const job = await Job.findById(contract.job).select('title');
+      const convId = [userId, contract.client._id.toString()].sort().join("_");
+      const autoMsg = await Message.create({
+          conversationId: convId,
+          sender: userId,
+          receiver: contract.client._id,
+          text: `I've submitted my completed work for "${job?.title || 'our contract'}". Please review it when you get a chance!`,
+          read: false
+      });
+      await autoMsg.populate('sender', 'name avatarUrl');
+      const io = socketUtil.get();
+      io?.to(convId).emit('new_message', autoMsg);
+      notify.workSubmitted(contract.client._id, contract, job);
+
     } else if (status === "completed") {
       if (!isClient) {
         return res.status(403).json({
@@ -267,12 +377,11 @@ router.put("/:id/status", async (req, res) => {
         relatedContract: contract._id,
       });
 
-      // Also mark the job as completed
       await Job.findByIdAndUpdate(contract.job, { status: "completed" });
+      const completedJob = await Job.findById(contract.job).select('title');
+      notify.contractCompleted(contract.freelancer._id, contract, completedJob);
+      notify.paymentReceived(contract.freelancer._id, Math.round(contract.agreedAmount / 100));
 
-    // -------------------------------------------------------------------------
-    // CANCELLATION FLOW — Return escrow to client
-    // -------------------------------------------------------------------------
     } else if (status === "cancelled") {
       // Refund the client by crediting them the escrowed amount
       await Transaction.create({
@@ -285,11 +394,9 @@ router.put("/:id/status", async (req, res) => {
         relatedContract: contract._id,
       });
 
-      // Reopen the job so the client can re-hire someone else
-      await Job.findByIdAndUpdate(contract.job, {
-        status: "open",
-        assignedTo: null,
-      });
+      await Job.findByIdAndUpdate(contract.job, { status: "open", assignedTo: null });
+      const cancelledJob = await Job.findById(contract.job).select('title');
+      notify.contractCancelled(contract.client._id, contract.freelancer._id, contract, cancelledJob);
     }
 
     await contract.save();

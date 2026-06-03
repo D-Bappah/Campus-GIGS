@@ -26,12 +26,13 @@ document.addEventListener('DOMContentLoaded', function () {
     window.setDashboardState('incomplete');
 
     // Dynamic Date
-    const dateElement = document.getElementById('currentDate');
-    if (dateElement) {
-        const options = { weekday: 'long', day: 'numeric', month: 'long' };
-        // const today = new Date();
-        // dateElement.textContent = today.toLocaleDateString('en-US', options);
-    }
+    const today = new Date();
+    const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    const dateStr = today.toLocaleDateString('en-NG', dateOptions);
+    const dateEl = document.getElementById('currentDate');
+    const dateElComplete = document.getElementById('currentDateComplete');
+    if (dateEl) dateEl.textContent = dateStr;
+    if (dateElComplete) dateElComplete.textContent = dateStr;
 
     // Dynamic User Info
    const updateUserInfo = async () => {
@@ -54,9 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem('token');
+            window.location.href = '../Login and authentification/login.html';
+            return;
         }
+        if (!response.ok) throw new Error('Failed to fetch user data');
 
         const userData = await response.json();
 
@@ -87,9 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     } catch (e) {
         console.error('Error loading user info:', e);
-        // If the token is expired or invalid, force them to log in again
-        localStorage.removeItem('token');
-        window.location.href = '../Login and authentification/login.html';
     }
 };
 

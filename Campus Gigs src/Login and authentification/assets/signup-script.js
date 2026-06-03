@@ -48,6 +48,30 @@ document.addEventListener('DOMContentLoaded', () => {
     el.style.borderColor = '';
   };
 
+  // Live role preview based on email domain
+  const roleBadge = document.getElementById('role-badge');
+  const roleHint = document.getElementById('role-hint');
+  emailInput.addEventListener('input', () => {
+    const val = emailInput.value.trim().toLowerCase();
+    if (!val || !val.includes('@')) {
+      if (roleBadge) roleBadge.style.display = 'none';
+      if (roleHint) roleHint.textContent = '';
+      return;
+    }
+    const isFreelancer = val.endsWith('@nileuniversity.edu.ng');
+    if (roleBadge) {
+      roleBadge.style.display = 'inline';
+      roleBadge.textContent = isFreelancer ? 'Freelancer' : 'Client';
+      roleBadge.style.background = isFreelancer ? '#d1fae5' : '#dbeafe';
+      roleBadge.style.color = isFreelancer ? '#065f46' : '#1e40af';
+    }
+    if (roleHint) {
+      roleHint.textContent = isFreelancer
+        ? 'Nile University email detected — you will be registered as a Freelancer.'
+        : 'You will be registered as a Client and can post jobs.';
+    }
+  });
+
   // Real-time validation
   [emailInput, studentIdInput, passwordInput, confirmInput].forEach(input => {
     input.addEventListener('input', () => clearError(input));
@@ -119,13 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (res.ok) {
-        // Success - redirect to verification or login
-        if (data.requiresVerification) {
-          window.location.href = 'verify.html';
-        } else {
-          alert("Registration Successful! Please login.");
-          window.location.href = 'login.html';
-        }
+        sessionStorage.setItem('pendingEmail', email);
+        window.location.href = 'verify.html';
       } else {
         // Handle specific backend errors
         let errorMessage = data.message || 'Registration failed';

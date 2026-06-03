@@ -317,29 +317,25 @@
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="stats-label"><i class="bi bi-people"></i> Total Users</div>
-                    <div class="stats-value">1</div>
-                    <div class="stats-trend trend-up"><i class="bi bi-arrow-up-short"></i> Loading…</div>
+                    <div class="stats-value" data-stat="users">—</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="stats-label"><i class="bi bi-briefcase"></i> Active Jobs</div>
-                    <div class="stats-value">6</div>
-                    <div class="stats-trend trend-up"><i class="bi bi-arrow-up-short"></i> Loading… </div>
+                    <div class="stats-value" data-stat="jobs">—</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="stats-label"><i class="bi bi-cash-stack"></i> Total Revenue</div>
-                    <div class="stats-value">---------</div>
-                    <div class="stats-trend trend-up"><i class="bi bi-arrow-up-short"></i> Loading… </div>
+                    <div class="stats-value" data-stat="revenue">—</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="stats-label"><i class="bi bi-exclamation-circle"></i> Pending Payouts</div>
-                    <div class="stats-value">--</div>
-                    <div class="stats-trend trend-down">Loading…</div>
+                    <div class="stats-value" data-stat="payouts">—</div>
                 </div>
             </div>
         </div>
@@ -365,28 +361,8 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Loading…</strong><br><small class="text-muted">Design & Creative</small></td>
-                                    <td>Loading…</td>
-                                    <td>Loading…</td>
-                                    <td><span class="badge-status status-pending">Pending Review</span></td>
-                                    <td><a href="#" class="action-link">Review</a></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>React Developer for E-commerce</strong><br><small class="text-muted">Development</small></td>
-                                    <td>Loading…</td>
-                                    <td>Loading…</td>
-                                    <td><span class="badge-status status-active">Pending Review</span></td>
-                                    <td><a href="#" class="action-link">Review</a></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Content Writer - Blog Posts</strong><br><small class="text-muted">Writing</small></td>
-                                    <td>Loading…</td>
-                                    <td>Loading…</td>
-                                    <td><span class="badge-status status-active">Pending Review</span></td>
-                                    <td><a href="#" class="action-link">Review</a></td>
-                                </tr>
+                            <tbody id="jobs-tbody">
+                                <tr><td colspan="5" class="text-center text-muted py-3">Loading…</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -409,52 +385,8 @@
                                     <th>Joined</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar me-3" style="width: 32px; height: 32px; font-size: 16px;">
-                                                <i class="bi bi-person"></i>
-                                            </div>
-                                            <div>
-                                                <strong>David O.</strong><br>
-                                                <small class="text-muted">david@example.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Freelancer</td>
-                                    <td>Today</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar me-3" style="width: 32px; height: 32px; font-size: 16px;">
-                                                <i class="bi bi-building"></i>
-                                            </div>
-                                            <div>
-                                                <strong>Alpha Studios</strong><br>
-                                                <small class="text-muted">hello@alpha.co</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Client</td>
-                                    <td>Yesterday</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar me-3" style="width: 32px; height: 32px; font-size: 16px;">
-                                                <i class="bi bi-person"></i>
-                                            </div>
-                                            <div>
-                                                <strong>Miriam S.</strong><br>
-                                                <small class="text-muted">miriams@test.ng</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Freelancer</td>
-                                    <td>2 days ago</td>
-                                </tr>
+                            <tbody id="users-tbody">
+                                <tr><td colspan="3" class="text-center text-muted py-3">Loading…</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -462,6 +394,21 @@
             </div>
 
         </div>
+
+        <!-- Pending Withdrawals -->
+        <div class="row g-4 mt-2">
+            <div class="col-12">
+                <div class="table-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Pending Withdrawal Requests</h2>
+                    </div>
+                    <div id="withdrawals-section">
+                        <p class="text-muted">Loading…</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Footer -->
@@ -478,9 +425,118 @@
     <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Set today's date dynamically
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('adminDate').textContent = new Date().toLocaleDateString('en-US', options);
+
+        const API = 'http://localhost:5000/api/admin';
+        const headers = () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+
+        function fmt(kobo) {
+            return '₦' + (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 0 });
+        }
+
+        function relativeDate(iso) {
+            const d = new Date(iso);
+            const now = new Date();
+            const diff = Math.floor((now - d) / 86400000);
+            if (diff === 0) return 'Today';
+            if (diff === 1) return 'Yesterday';
+            return `${diff} days ago`;
+        }
+
+        async function loadStats() {
+            const res = await fetch(`${API}/stats`, { headers: headers() });
+            if (!res.ok) return;
+            const s = await res.json();
+
+            document.querySelector('[data-stat="users"]').textContent = s.totalUsers;
+            document.querySelector('[data-stat="jobs"]').textContent = s.activeJobs;
+            document.querySelector('[data-stat="revenue"]').textContent = fmt(s.totalRevenue);
+            document.querySelector('[data-stat="payouts"]').textContent = s.pendingPayouts;
+        }
+
+        async function loadJobs() {
+            const res = await fetch(`${API}/jobs?limit=5`, { headers: headers() });
+            if (!res.ok) return;
+            const jobs = await res.json();
+            const tbody = document.getElementById('jobs-tbody');
+            tbody.innerHTML = jobs.map(j => {
+                const client = j.postedBy;
+                const name = client?.displayName || client?.firstName || client?.email || '—';
+                const statusClass = j.status === 'open' ? 'status-active' : j.status === 'in_progress' ? 'status-pending' : 'status-resolved';
+                return `<tr>
+                    <td><strong>${j.title}</strong><br><small class="text-muted">${j.category || ''}</small></td>
+                    <td>${name}</td>
+                    <td>${fmt(j.budget)}</td>
+                    <td><span class="badge-status ${statusClass}">${j.status}</span></td>
+                    <td><a href="job-details.html?id=${j._id}" class="action-link">View</a></td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function loadUsers() {
+            const res = await fetch(`${API}/users?limit=5`, { headers: headers() });
+            if (!res.ok) return;
+            const users = await res.json();
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = users.map(u => {
+                const name = u.displayName || u.firstName || u.email;
+                const icon = u.role === 'client' ? 'bi-building' : 'bi-person';
+                return `<tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-3" style="width:32px;height:32px;font-size:16px;">
+                                <i class="bi ${icon}"></i>
+                            </div>
+                            <div>
+                                <strong>${name}</strong><br>
+                                <small class="text-muted">${u.email}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${u.role}</td>
+                    <td>${relativeDate(u.createdAt)}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function loadWithdrawals() {
+            const res = await fetch(`${API}/withdrawals`, { headers: headers() });
+            if (!res.ok) return;
+            const txs = await res.json();
+            const container = document.getElementById('withdrawals-section');
+            if (!txs.length) { container.innerHTML = '<p class="text-muted">No pending withdrawals.</p>'; return; }
+            container.innerHTML = `<div class="table-responsive"><table class="table table-hover align-middle">
+                <thead><tr><th>User</th><th>Amount</th><th>Bank</th><th>Requested</th><th>Action</th></tr></thead>
+                <tbody>${txs.map(t => `<tr>
+                    <td>${t.user?.email || '—'}</td>
+                    <td>${fmt(t.amount)}</td>
+                    <td>${t.bankDetails?.bankName || '—'} ****${(t.bankDetails?.accountNumber || '').slice(-4)}</td>
+                    <td>${relativeDate(t.createdAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success me-1" onclick="handleWithdrawal('${t._id}','approve')">Approve</button>
+                        <button class="btn btn-sm btn-danger" onclick="handleWithdrawal('${t._id}','reject')">Reject</button>
+                    </td>
+                </tr>`).join('')}</tbody>
+            </table></div>`;
+        }
+
+        window.handleWithdrawal = async (id, action) => {
+            await fetch(`${API}/withdrawals/${id}`, {
+                method: 'PUT',
+                headers: headers(),
+                body: JSON.stringify({ action })
+            });
+            await loadStats();
+            await loadWithdrawals();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadJobs();
+            loadUsers();
+            loadWithdrawals();
+        });
     </script>
 
 </body>

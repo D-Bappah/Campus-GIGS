@@ -4,45 +4,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Submit Proposal — Campus Gigs</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="assets/notifications.css" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; background: #f9fafb; }
+    .context-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; }
+    .submit-btn { background: #3b82f6; color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 15px; width: 100%; }
+    .submit-btn:hover { background: #2563eb; }
+    .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+  </style>
 </head>
-<body class="bg-light">
+<body>
 
-  <nav class="navbar navbar-dark bg-primary">
+  <nav class="navbar navbar-light bg-white border-bottom px-3 px-md-0">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="index.html">🎓 Campus Gigs</a>
-      <div class="ms-auto">
-        <a href="browse-jobs.html" class="btn btn-outline-light btn-sm">
-          <i class="bi bi-arrow-left me-1"></i> Back to Jobs
-        </a>
-      </div>
+      <a class="navbar-brand fw-bold text-primary" href="browse-jobs.html">🎓 Campus Gigs</a>
+      <a href="browse-jobs.html" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Jobs
+      </a>
     </div>
   </nav>
 
-  <div class="container py-4" style="max-width: 700px;">
+  <div class="container py-5" style="max-width: 720px;">
 
-    <!-- Context banner — job-application.js fills this in via prefillJobContext() -->
-    <div id="job-context" class="alert alert-info mb-4">
-      <strong>Applying for:</strong>
-      <span id="context-job-title">Loading...</span>
-      &nbsp;·&nbsp;
-      <strong>Budget:</strong> <span id="context-job-budget">—</span>
-      &nbsp;·&nbsp;
-      <strong>Expected delivery:</strong> <span id="context-delivery-days">—</span>
+    <!-- Job context banner -->
+    <div class="context-banner">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <i class="bi bi-briefcase text-primary"></i>
+        <strong id="context-job-title">Loading job info…</strong>
+      </div>
+      <div class="d-flex gap-4 small text-muted mt-1">
+        <span><i class="bi bi-wallet2 me-1"></i>Budget: <strong id="context-job-budget">—</strong></span>
+        <span><i class="bi bi-clock me-1"></i>Expected: <strong id="context-delivery-days">—</strong></span>
+      </div>
     </div>
 
-    <div class="card shadow-sm border-0">
+    <div class="card border-0 shadow-sm">
       <div class="card-body p-4">
         <h5 class="fw-bold mb-4">Your Proposal</h5>
 
-        <div id="application-error"   class="alert alert-danger d-none"  role="alert"></div>
+        <div id="application-error"   class="alert alert-danger  d-none" role="alert"></div>
         <div id="application-success" class="alert alert-success d-none" role="alert"></div>
 
-        <!-- id="application-form" is the hook job-application.js binds to -->
         <form id="application-form" novalidate>
 
-          <div class="mb-3">
+          <div class="mb-4">
             <label for="cover-letter" class="form-label fw-semibold">
               Cover Letter <span class="text-danger">*</span>
             </label>
@@ -61,64 +68,47 @@
             </div>
           </div>
 
-          <div class="row g-3 mb-3">
+          <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label for="bid-amount" class="form-label fw-semibold">
                 Your Bid (₦) <span class="text-danger">*</span>
               </label>
-              <input
-                type="number"
-                class="form-control"
-                id="bid-amount"
-                min="1"
-                step="500"
-                placeholder="e.g. 25000"
-                required
-              />
+              <input type="number" class="form-control" id="bid-amount" min="1" step="500" placeholder="e.g. 25000" required />
               <div class="form-text">Client's budget shown above for reference.</div>
             </div>
             <div class="col-md-6">
               <label for="delivery-days" class="form-label fw-semibold">
                 Delivery Time (days) <span class="text-danger">*</span>
               </label>
-              <input
-                type="number"
-                class="form-control"
-                id="delivery-days"
-                min="1"
-                placeholder="e.g. 7"
-                required
-              />
+              <input type="number" class="form-control" id="delivery-days" min="1" placeholder="e.g. 7" required />
               <div class="form-text">How many days do you need?</div>
             </div>
           </div>
 
-          <!-- Resume upload placeholder -->
-          <!-- [EXTERNAL ACTION REQUIRED]: Enable this input after Cloudinary setup.
-               See Application.js → resumeUrl for full integration instructions.
-               When ready, uncomment this block and switch job-application.js from
-               JSON fetch to FormData fetch (instructions in job-application.js). -->
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="assets/notifications.js" defer></script>
-    <script src="assets/job-details.js" defer></script>
+          <div class="mb-4">
+            <label for="file-attachment" class="form-label fw-semibold">
+              Portfolio / Resume <span class="text-muted fw-normal">(optional)</span>
+            </label>
+            <input type="file" class="form-control" id="file-attachment" accept=".jpg,.jpeg,.png,.pdf" />
+            <div class="form-text">PDF, JPG or PNG — max 5 MB. Attach work samples or your CV.</div>
+          </div>
 
-          <button type="submit" id="application-submit-btn" class="btn btn-primary w-100">
+          <button type="submit" id="application-submit-btn" class="submit-btn">
             <i class="bi bi-send me-1"></i> Submit Proposal
           </button>
+
         </form>
 
-        <!-- Post-submit action links — hidden until successful submission -->
         <div id="post-submit-actions" class="mt-3 d-none text-center"></div>
       </div>
     </div>
+
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/notifications.js"     defer></script>
-  <script src="js/job-application.js"   defer></script>
+  <script src="../bootstrap-5.3.8-dist/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/notifications.js" defer></script>
+  <script src="assets/job-application.js" defer></script>
   <script>
-    // Live character counter for the cover letter textarea
     document.addEventListener("DOMContentLoaded", () => {
       const textarea = document.getElementById("cover-letter");
       const counter  = document.getElementById("cover-letter-count");
